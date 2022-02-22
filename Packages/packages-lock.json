@@ -169,7 +169,7 @@
       }
     },
     "io.realm.unity": {
-      "version": "file:C:/Users/rymlk/Downloads/io.realm.unity-10.9.0.tgz",
+      "version": "file:../Assets/Mongodb/io.realm.unity-10.9.0.tgz",
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {}
