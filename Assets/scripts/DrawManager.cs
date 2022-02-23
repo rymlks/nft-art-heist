@@ -27,6 +27,13 @@ public class DrawManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Vector3 mousePos = Input.mousePosition;
+
+
+    }
+
+    private void OnMouseDrag()
+    {
         
     }
 
