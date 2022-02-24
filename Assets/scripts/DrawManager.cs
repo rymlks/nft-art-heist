@@ -71,7 +71,7 @@ public class DrawManager : MonoBehaviour
     IEnumerator SaveDrawing()
     {
 
-        Shop.SerializeTexture exportObj = new Shop.SerializeTexture();
+        JSONTypes.SerializeTexture exportObj = new JSONTypes.SerializeTexture();
         exportObj.x = drawing.width;
         exportObj.y = drawing.height;
         exportObj.bytes = ImageConversion.EncodeToPNG(drawing);
@@ -79,7 +79,7 @@ public class DrawManager : MonoBehaviour
 
         WWWForm form = new WWWForm();
 
-        Shop.SaleEntry entry = new Shop.SaleEntry();
+        JSONTypes.SaleEntry entry = new JSONTypes.SaleEntry();
         entry.userGuid = gameManager.guid.ToString();
         entry.artGuid = currentData.guid.ToString();
         entry.name = currentData.name;
@@ -121,7 +121,7 @@ public class DrawManager : MonoBehaviour
                 Color theirColor = reference.GetPixel(reference.width * x / drawing.width, reference.height * y / drawing.height);
 
                 Color diff = myColor - theirColor;
-                diffValue += (Mathf.Abs(diff.r) + Mathf.Abs(diff.g) + Mathf.Abs(diff.b)) / 3.0;
+                diffValue += (Mathf.Abs(diff.r) + Mathf.Abs(diff.g) + Mathf.Abs(diff.b) + Mathf.Abs(diff.a)) / 4.0;
             }
         }
         diffValue /= drawing.width * drawing.height;

@@ -15,57 +15,6 @@ public class Shop : MonoBehaviour
 
     public Sprite heistSprite;
 
-    [System.Serializable]
-    public class SerializeTexture
-    {
-        [SerializeField]
-        public int x;
-        [SerializeField]
-        public int y;
-        [SerializeField]
-        public byte[] bytes;
-    }
-
-    [System.Serializable]
-    public class SaleEntry
-    {
-        [SerializeField]
-        public string userGuid;
-        [SerializeField]
-        public string artGuid;
-        [SerializeField]
-        public string name;
-        [SerializeField]
-        public double price;
-        [SerializeField]
-        public string imageData;
-        [SerializeField]
-        public bool sold;
-        [SerializeField]
-        public bool forSale;
-    }
-
-    [System.Serializable]
-    public class SaleEntryList
-    {
-        [SerializeField]
-        public SaleEntry[] entries;
-    }
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-        Gallery();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void Gallery()
     {
         header.text = "Click an NFT to\nmake a sale offer";
@@ -114,15 +63,15 @@ public class Shop : MonoBehaviour
             {
                 Debug.Log(www.downloadHandler.text);
 
-                SaleEntryList entries = JsonUtility.FromJson<SaleEntryList>(www.downloadHandler.text);
+                JSONTypes.SaleEntryList entries = JsonUtility.FromJson<JSONTypes.SaleEntryList>(www.downloadHandler.text);
 
                 for (int i = 0; i < Sellbuttons.Length; i++)
                 {
                     // Show your own art
                     if (i < entries.entries.Length )
                     {
-                        SaleEntry entry = entries.entries[i];
-                        SerializeTexture importObj = JsonUtility.FromJson<SerializeTexture>(entry.imageData);
+                        JSONTypes.SaleEntry entry = entries.entries[i];
+                        JSONTypes.SerializeTexture importObj = JsonUtility.FromJson<JSONTypes.SerializeTexture>(entry.imageData);
                         Texture2D tex = new Texture2D(importObj.x, importObj.y);
                         tex.filterMode = FilterMode.Point;
                         ImageConversion.LoadImage(tex, importObj.bytes);
@@ -201,12 +150,12 @@ public class Shop : MonoBehaviour
             {
                 Debug.Log(www.downloadHandler.text);
 
-                SaleEntryList entries = JsonUtility.FromJson<SaleEntryList>(www.downloadHandler.text);
+                JSONTypes.SaleEntryList entries = JsonUtility.FromJson<JSONTypes.SaleEntryList>(www.downloadHandler.text);
 
                 for (int i=0; i < 3 && i < entries.entries.Length; i++)
                 {
-                    SaleEntry entry = entries.entries[i];
-                    SerializeTexture importObj = JsonUtility.FromJson<SerializeTexture>(entry.imageData);
+                    JSONTypes.SaleEntry entry = entries.entries[i];
+                    JSONTypes.SerializeTexture importObj = JsonUtility.FromJson<JSONTypes.SerializeTexture>(entry.imageData);
                     Texture2D tex = new Texture2D(importObj.x, importObj.y);
                     tex.filterMode = FilterMode.Point;
                     ImageConversion.LoadImage(tex, importObj.bytes);
@@ -223,6 +172,7 @@ public class Shop : MonoBehaviour
                 }
             }
         }
+        gameManager.UpdateUserData();
     }
 
     public void Sell(GameObject option)
@@ -235,7 +185,13 @@ public class Shop : MonoBehaviour
         // Sell NFT
         } else
         {
-            StartCoroutine(MakeSale(option));
+            if (data.sold)
+            {
+                StartCoroutine(RequestCollection(option));
+            } else if (!data.forSale)
+            {
+                StartCoroutine(MakeSale(option));
+            }
         }
     }
 
@@ -245,7 +201,7 @@ public class Shop : MonoBehaviour
 
         Texture2D tex = option.GetComponentInChildren<Image>().sprite.texture;
 
-        SerializeTexture exportObj = new SerializeTexture();
+        JSONTypes.SerializeTexture exportObj = new JSONTypes.SerializeTexture();
         exportObj.x = tex.width;
         exportObj.y = tex.height;
         exportObj.bytes = ImageConversion.EncodeToPNG(tex);
@@ -253,7 +209,7 @@ public class Shop : MonoBehaviour
 
         WWWForm form = new WWWForm();
 
-        SaleEntry entry = new SaleEntry();
+        JSONTypes.SaleEntry entry = new JSONTypes.SaleEntry();
         entry.userGuid = gameManager.guid.ToString();
         entry.artGuid = data.guid.ToString();
         entry.name = data.name;
@@ -280,6 +236,8 @@ public class Shop : MonoBehaviour
                 Debug.Log(www.downloadHandler.text);
             }
         }
+        gameManager.UpdateUserData();
+        Gallery();
     }
 
     public void Buy(GameObject option)
@@ -300,7 +258,7 @@ public class Shop : MonoBehaviour
         NFTData data = option.GetComponentInChildren<NFTData>();
         Texture2D tex = option.GetComponentInChildren<Image>().sprite.texture;
 
-        SerializeTexture exportObj = new SerializeTexture();
+        JSONTypes.SerializeTexture exportObj = new JSONTypes.SerializeTexture();
         exportObj.x = tex.width;
         exportObj.y = tex.height;
         exportObj.bytes = ImageConversion.EncodeToPNG(tex);
@@ -308,7 +266,7 @@ public class Shop : MonoBehaviour
 
         WWWForm form = new WWWForm();
 
-        SaleEntry entry = new SaleEntry();
+        JSONTypes.SaleEntry entry = new JSONTypes.SaleEntry();
         entry.userGuid = data.ownderGuid.ToString();
         entry.artGuid = data.guid.ToString();
         entry.name = data.name;
@@ -333,8 +291,55 @@ public class Shop : MonoBehaviour
             else
             {
                 Debug.Log(www.downloadHandler.text);
-                BrowseSales();
             }
         }
+        BrowseSales();
+        gameManager.UpdateUserData();
+    }
+
+    IEnumerator RequestCollection(GameObject option)
+    {
+        NFTData data = option.GetComponentInChildren<NFTData>();
+
+        Texture2D tex = option.GetComponentInChildren<Image>().sprite.texture;
+
+        JSONTypes.SerializeTexture exportObj = new JSONTypes.SerializeTexture();
+        exportObj.x = tex.width;
+        exportObj.y = tex.height;
+        exportObj.bytes = ImageConversion.EncodeToPNG(tex);
+        string imageText = JsonUtility.ToJson(exportObj);
+
+        WWWForm form = new WWWForm();
+
+        JSONTypes.SaleEntry entry = new JSONTypes.SaleEntry();
+        entry.userGuid = gameManager.guid.ToString();
+        entry.artGuid = data.guid.ToString();
+        entry.name = data.name;
+        entry.price = data.price;
+        entry.imageData = imageText;
+        entry.sold = data.sold;
+        entry.forSale = data.forSale;
+
+
+        form.AddField("entry", JsonUtility.ToJson(entry));
+
+        using (UnityWebRequest www = UnityWebRequest.Post("https://us-east-1.aws.data.mongodb-api.com/app/test-nfts-kfnqu/endpoint/collectSale?secret=foobar", form))
+        {
+
+            yield return www.SendWebRequest();
+
+            if (www.responseCode != 200)
+            {
+                Debug.Log("fucked");
+                Debug.Log(www.error);
+                Debug.Log(www.ToString());
+            }
+            else
+            {
+                Debug.Log(www.downloadHandler.text);
+            }
+        }
+        gameManager.UpdateUserData();
+        Gallery();
     }
 }
