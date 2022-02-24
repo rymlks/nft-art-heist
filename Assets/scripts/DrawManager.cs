@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 public class DrawManager : MonoBehaviour
 {
@@ -31,7 +32,8 @@ public class DrawManager : MonoBehaviour
     {
         secondsLeft = 30;
         referenceData = option.GetComponentInChildren<NFTData>();
-        currentData = new NFTData(referenceData);
+        currentData = option.AddComponent<NFTData>();
+        currentData.Copy(referenceData);
         reference = option.GetComponentInChildren<Image>().sprite.texture;
 
         previewImage.sprite = Sprite.Create(reference, new Rect(0.0f, 0.0f, reference.width, reference.height), Vector2.one);
@@ -62,6 +64,49 @@ public class DrawManager : MonoBehaviour
     public void StopDrawing()
     {
         drawingActive = false;
+        Destroy(referenceData);
+        StartCoroutine(SaveDrawing());
+    }
+
+    IEnumerator SaveDrawing()
+    {
+
+        Shop.SerializeTexture exportObj = new Shop.SerializeTexture();
+        exportObj.x = drawing.width;
+        exportObj.y = drawing.height;
+        exportObj.bytes = ImageConversion.EncodeToPNG(drawing);
+        string imageText = JsonUtility.ToJson(exportObj);
+
+        WWWForm form = new WWWForm();
+
+        Shop.SaleEntry entry = new Shop.SaleEntry();
+        entry.userGuid = gameManager.guid.ToString();
+        entry.artGuid = currentData.guid.ToString();
+        entry.name = currentData.name;
+        entry.price = currentData.price;
+        entry.imageData = imageText;
+        entry.sold = false;
+        entry.forSale = false;
+
+        form.AddField("entry", JsonUtility.ToJson(entry));
+
+        using (UnityWebRequest www = UnityWebRequest.Post("https://us-east-1.aws.data.mongodb-api.com/app/test-nfts-kfnqu/endpoint/save?secret=foobar", form))
+        {
+
+            yield return www.SendWebRequest();
+
+            if (www.responseCode != 200)
+            {
+                Debug.Log("fucked");
+                Debug.Log(www.error);
+                Debug.Log(www.ToString());
+            }
+            else
+            {
+                Debug.Log(www.ToString());
+            }
+        }
+
         gameManager.EndDrawing(drawing);
     }
 

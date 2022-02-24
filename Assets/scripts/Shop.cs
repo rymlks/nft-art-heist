@@ -52,13 +52,10 @@ public class Shop : MonoBehaviour
         public SaleEntry[] entries;
     }
 
-    System.Guid myGUID = System.Guid.NewGuid();
 
     // Start is called before the first frame update
     void Start()
     {
-        // 89a89392-6aee-4104-b36b-88867c7b54cb
-        myGUID = System.Guid.Parse("89a89392-6aee-4104-b36b-88867c7b54cb");
 
         Gallery();
     }
@@ -102,7 +99,7 @@ public class Shop : MonoBehaviour
 
     IEnumerator RequestGallery()
     {
-        using (UnityWebRequest www = UnityWebRequest.Get("https://us-east-1.aws.data.mongodb-api.com/app/test-nfts-kfnqu/endpoint/myNFTs?secret=foobar&guid=" + myGUID))
+        using (UnityWebRequest www = UnityWebRequest.Get("https://us-east-1.aws.data.mongodb-api.com/app/test-nfts-kfnqu/endpoint/myNFTs?secret=foobar&guid=" + gameManager.guid))
         {
 
             yield return www.SendWebRequest();
@@ -191,7 +188,7 @@ public class Shop : MonoBehaviour
     IEnumerator RequestBrowseSales()
     {
 
-        using (UnityWebRequest www = UnityWebRequest.Get("https://us-east-1.aws.data.mongodb-api.com/app/test-nfts-kfnqu/endpoint/browse?secret=foobar&guid=" + myGUID))
+        using (UnityWebRequest www = UnityWebRequest.Get("https://us-east-1.aws.data.mongodb-api.com/app/test-nfts-kfnqu/endpoint/browse?secret=foobar&guid=" + gameManager.guid))
         {
 
             yield return www.SendWebRequest();
@@ -224,6 +221,7 @@ public class Shop : MonoBehaviour
 
                     Buybuttons[i].GetComponentInChildren<NFTData>().name = entry.name;
                     Buybuttons[i].GetComponentInChildren<NFTData>().guid = System.Guid.Parse(entry.artGuid);
+                    Buybuttons[i].GetComponentInChildren<NFTData>().ownderGuid = System.Guid.Parse(entry.userGuid);
                     Buybuttons[i].GetComponentInChildren<NFTData>().price = entry.price;
                     Buybuttons[i].GetComponentInChildren<NFTData>().sold = entry.sold;
                     Buybuttons[i].GetComponentInChildren<NFTData>().forSale = entry.forSale;
@@ -261,7 +259,7 @@ public class Shop : MonoBehaviour
         WWWForm form = new WWWForm();
 
         SaleEntry entry = new SaleEntry();
-        entry.userGuid = myGUID.ToString();
+        entry.userGuid = gameManager.guid.ToString();
         entry.artGuid = data.guid.ToString();
         entry.name = data.name;
         entry.price = data.price;
@@ -272,6 +270,61 @@ public class Shop : MonoBehaviour
         form.AddField("entry", JsonUtility.ToJson(entry));
 
         using (UnityWebRequest www = UnityWebRequest.Post("https://us-east-1.aws.data.mongodb-api.com/app/test-nfts-kfnqu/endpoint/sell?secret=foobar", form))
+        {
+
+            yield return www.SendWebRequest();
+
+            if (www.responseCode != 200)
+            {
+                Debug.Log("fucked");
+                Debug.Log(www.error);
+                Debug.Log(www.ToString());
+            }
+            else
+            {
+                Debug.Log(www.ToString());
+            }
+        }
+    }
+
+    public void Buy(GameObject option)
+    {
+        NFTData data = option.GetComponentInChildren<NFTData>();
+        if (data.guid == System.Guid.Empty)
+        {
+            Debug.Log("Empty");
+        }
+        else
+        {
+            StartCoroutine(MakePurchase(option));
+        }
+    }
+
+    IEnumerator MakePurchase(GameObject option)
+    {
+        NFTData data = option.GetComponentInChildren<NFTData>();
+        Texture2D tex = option.GetComponentInChildren<Image>().sprite.texture;
+
+        SerializeTexture exportObj = new SerializeTexture();
+        exportObj.x = tex.width;
+        exportObj.y = tex.height;
+        exportObj.bytes = ImageConversion.EncodeToPNG(tex);
+        string imageText = JsonUtility.ToJson(exportObj);
+
+        WWWForm form = new WWWForm();
+
+        SaleEntry entry = new SaleEntry();
+        entry.userGuid = data.ownderGuid.ToString();
+        entry.artGuid = data.guid.ToString();
+        entry.name = data.name;
+        entry.price = data.price;
+        entry.imageData = imageText;
+        entry.sold = true;
+        entry.forSale = true;
+
+        form.AddField("entry", JsonUtility.ToJson(entry));
+
+        using (UnityWebRequest www = UnityWebRequest.Post("https://us-east-1.aws.data.mongodb-api.com/app/test-nfts-kfnqu/endpoint/buy?secret=foobar&guid=" + gameManager.guid, form))
         {
 
             yield return www.SendWebRequest();
