@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,91 +15,28 @@ public class Shop : MonoBehaviour
     public Text header;
 
     public Sprite heistSprite;
+    public Sprite soldSprite;
+    public Sprite forSaleSprite;
+
+    public Sprite heistPreviewSprite;
 
     public void Gallery()
     {
-        header.text = "Click an NFT to\nmake a sale offer";
+        header.text = "Click an NFT to\nmake a sale offer or\nstart a heist";
 
         foreach (GameObject button in Sellbuttons)
         {
-            button.GetComponentInChildren<Image>().sprite = null;
-            button.GetComponentInChildren<Text>().text = "";
             button.SetActive(true);
-            button.GetComponentInChildren<NFTData>().name = "";
-            button.GetComponentInChildren<NFTData>().guid = System.Guid.Empty;
-            button.GetComponentInChildren<NFTData>().price = 0;
-            button.GetComponentInChildren<NFTData>().sold = false;
-            button.GetComponentInChildren<NFTData>().forSale = false;
+            ResetButton(button);
         }
 
         foreach (GameObject button in Buybuttons)
         {
-            button.GetComponentInChildren<Image>().sprite = null;
-            button.GetComponentInChildren<Text>().text = "";
             button.SetActive(false);
-            button.GetComponentInChildren<NFTData>().name = "";
-            button.GetComponentInChildren<NFTData>().guid = System.Guid.Empty;
-            button.GetComponentInChildren<NFTData>().price = 0;
-            button.GetComponentInChildren<NFTData>().sold = false;
-            button.GetComponentInChildren<NFTData>().forSale = false;
+            ResetButton(button);
         }
 
         StartCoroutine(RequestGallery());
-    }
-
-    IEnumerator RequestGallery()
-    {
-        using (UnityWebRequest www = UnityWebRequest.Get("https://us-east-1.aws.data.mongodb-api.com/app/test-nfts-kfnqu/endpoint/myNFTs?secret=foobar&guid=" + gameManager.guid))
-        {
-
-            yield return www.SendWebRequest();
-
-            if (www.responseCode != 200)
-            {
-                Debug.Log("fucked");
-                Debug.Log(www.error);
-                Debug.Log(www.ToString());
-            }
-            else
-            {
-                Debug.Log(www.downloadHandler.text);
-
-                JSONTypes.SaleEntryList entries = JsonUtility.FromJson<JSONTypes.SaleEntryList>(www.downloadHandler.text);
-
-                for (int i = 0; i < Sellbuttons.Length; i++)
-                {
-                    // Show your own art
-                    if (i < entries.entries.Length )
-                    {
-                        JSONTypes.SaleEntry entry = entries.entries[i];
-                        JSONTypes.SerializeTexture importObj = JsonUtility.FromJson<JSONTypes.SerializeTexture>(entry.imageData);
-                        Texture2D tex = new Texture2D(importObj.x, importObj.y);
-                        tex.filterMode = FilterMode.Point;
-                        ImageConversion.LoadImage(tex, importObj.bytes);
-                        Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), Vector2.one);
-                        Sellbuttons[i].GetComponentInChildren<Image>().sprite = mySprite;
-
-                        Sellbuttons[i].GetComponentInChildren<Text>().text = entry.name + "\n" + entry.price.ToString("$0.00");
-
-                        Sellbuttons[i].GetComponentInChildren<NFTData>().name = entry.name;
-                        Sellbuttons[i].GetComponentInChildren<NFTData>().guid = System.Guid.Parse(entry.artGuid);
-                        Sellbuttons[i].GetComponentInChildren<NFTData>().price = entry.price;
-                        Sellbuttons[i].GetComponentInChildren<NFTData>().sold = entry.sold;
-                        Sellbuttons[i].GetComponentInChildren<NFTData>().forSale = entry.forSale;
-
-                    } else // Show heist option
-                    {
-                        double price = Mathf.Round(Random.value * 10000) / 100.0d;
-
-                        Sellbuttons[i].GetComponentInChildren<Text>().text = "Heist Contract\n" + price.ToString("$0.00");
-                        Sellbuttons[i].GetComponentInChildren<Image>().sprite = heistSprite;
-                        Sellbuttons[i].GetComponentInChildren<NFTData>().price = price;
-
-
-                    }
-                }
-            }
-        }
     }
 
     public void BrowseSales()
@@ -106,73 +44,29 @@ public class Shop : MonoBehaviour
         header.text = "Click an NFT to\nmake a buy offer";
         foreach (GameObject button in Sellbuttons)
         {
-            button.GetComponentInChildren<Image>().sprite = null;
-            button.GetComponentInChildren<Text>().text = "";
             button.SetActive(false);
-
-            button.GetComponentInChildren<NFTData>().name = "";
-            button.GetComponentInChildren<NFTData>().guid = System.Guid.Empty;
-            button.GetComponentInChildren<NFTData>().price = 0;
-            button.GetComponentInChildren<NFTData>().sold = false;
-            button.GetComponentInChildren<NFTData>().forSale = false;
+            ResetButton(button);
         }
 
         foreach (GameObject button in Buybuttons)
         {
-            button.GetComponentInChildren<Image>().sprite = null;
-            button.GetComponentInChildren<Text>().text = "";
             button.SetActive(true);
-            button.GetComponentInChildren<NFTData>().name = "";
-            button.GetComponentInChildren<NFTData>().guid = System.Guid.Empty;
-            button.GetComponentInChildren<NFTData>().price = 0;
-            button.GetComponentInChildren<NFTData>().sold = false;
-            button.GetComponentInChildren<NFTData>().forSale = false;
+            ResetButton(button);
         }
 
         StartCoroutine(RequestBrowseSales());
     }
 
-    IEnumerator RequestBrowseSales()
+    private void ResetButton(GameObject button)
     {
-
-        using (UnityWebRequest www = UnityWebRequest.Get("https://us-east-1.aws.data.mongodb-api.com/app/test-nfts-kfnqu/endpoint/browse?secret=foobar&guid=" + gameManager.guid))
-        {
-
-            yield return www.SendWebRequest();
-
-            if (www.responseCode != 200)
-            {
-                Debug.Log("fucked");
-                Debug.Log(www.error);
-                Debug.Log(www.ToString());
-            }
-            else
-            {
-                Debug.Log(www.downloadHandler.text);
-
-                JSONTypes.SaleEntryList entries = JsonUtility.FromJson<JSONTypes.SaleEntryList>(www.downloadHandler.text);
-
-                for (int i=0; i < 3 && i < entries.entries.Length; i++)
-                {
-                    JSONTypes.SaleEntry entry = entries.entries[i];
-                    JSONTypes.SerializeTexture importObj = JsonUtility.FromJson<JSONTypes.SerializeTexture>(entry.imageData);
-                    Texture2D tex = new Texture2D(importObj.x, importObj.y);
-                    tex.filterMode = FilterMode.Point;
-                    ImageConversion.LoadImage(tex, importObj.bytes);
-                    Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), Vector2.one);
-                    Buybuttons[i].GetComponentInChildren<Image>().sprite = mySprite;
-                    Buybuttons[i].GetComponentInChildren<Text>().text = entry.name + "\n" + entry.price.ToString("$0.00");
-
-                    Buybuttons[i].GetComponentInChildren<NFTData>().name = entry.name;
-                    Buybuttons[i].GetComponentInChildren<NFTData>().guid = System.Guid.Parse(entry.artGuid);
-                    Buybuttons[i].GetComponentInChildren<NFTData>().ownderGuid = System.Guid.Parse(entry.userGuid);
-                    Buybuttons[i].GetComponentInChildren<NFTData>().price = entry.price;
-                    Buybuttons[i].GetComponentInChildren<NFTData>().sold = entry.sold;
-                    Buybuttons[i].GetComponentInChildren<NFTData>().forSale = entry.forSale;
-                }
-            }
-        }
-        gameManager.UpdateUserData();
+        button.GetComponentInChildren<Image>().sprite = null;
+        button.GetComponentInChildren<Text>().text = "";
+        button.GetComponentInChildren<InputField>().text = "";
+        button.GetComponentInChildren<NFTData>().name = "";
+        button.GetComponentInChildren<NFTData>().guid = System.Guid.Empty;
+        button.GetComponentInChildren<NFTData>().price = 0;
+        button.GetComponentInChildren<NFTData>().sold = false;
+        button.GetComponentInChildren<NFTData>().forSale = false;
     }
 
     public void Sell(GameObject option)
@@ -191,53 +85,11 @@ public class Shop : MonoBehaviour
             } else if (!data.forSale)
             {
                 StartCoroutine(MakeSale(option));
+            } else
+            {
+                StartCoroutine(CancelSale(option));
             }
         }
-    }
-
-    IEnumerator MakeSale(GameObject option)
-    {
-        NFTData data = option.GetComponentInChildren<NFTData>();
-
-        Texture2D tex = option.GetComponentInChildren<Image>().sprite.texture;
-
-        JSONTypes.SerializeTexture exportObj = new JSONTypes.SerializeTexture();
-        exportObj.x = tex.width;
-        exportObj.y = tex.height;
-        exportObj.bytes = ImageConversion.EncodeToPNG(tex);
-        string imageText = JsonUtility.ToJson(exportObj);
-
-        WWWForm form = new WWWForm();
-
-        JSONTypes.SaleEntry entry = new JSONTypes.SaleEntry();
-        entry.userGuid = gameManager.guid.ToString();
-        entry.artGuid = data.guid.ToString();
-        entry.name = data.name;
-        entry.price = data.price;
-        entry.imageData = imageText;
-        entry.sold = false;
-        entry.forSale = true;
-
-        form.AddField("entry", JsonUtility.ToJson(entry));
-
-        using (UnityWebRequest www = UnityWebRequest.Post("https://us-east-1.aws.data.mongodb-api.com/app/test-nfts-kfnqu/endpoint/sell?secret=foobar", form))
-        {
-
-            yield return www.SendWebRequest();
-
-            if (www.responseCode != 200)
-            {
-                Debug.Log("fucked");
-                Debug.Log(www.error);
-                Debug.Log(www.ToString());
-            }
-            else
-            {
-                Debug.Log(www.downloadHandler.text);
-            }
-        }
-        gameManager.UpdateUserData();
-        Gallery();
     }
 
     public void Buy(GameObject option)
@@ -245,7 +97,7 @@ public class Shop : MonoBehaviour
         NFTData data = option.GetComponentInChildren<NFTData>();
         if (data.guid == System.Guid.Empty)
         {
-            Debug.Log("Empty");
+            Debug.Log("Cannot buy empty NFT");
         }
         else
         {
@@ -253,55 +105,61 @@ public class Shop : MonoBehaviour
         }
     }
 
+    public void UpdatePrice(GameObject option)
+    {
+        NFTData data = option.GetComponent<NFTData>();
+        data.price = double.Parse(option.GetComponentInChildren<InputField>().text);
+        StartCoroutine(RequestUpdatePrice(option));
+    }
+
+    IEnumerator RequestGallery()
+    {
+        return RequestAndFill(null, "myNFTs", SetGallery);
+    }
+
+    IEnumerator RequestBrowseSales()
+    {
+        return RequestAndFill(null, "browse", SetBrowse);
+    }
+
+    IEnumerator MakeSale(GameObject option)
+    {
+        return RequestAndFill(option, "sell", SetGallery);
+    }
+
+    IEnumerator CancelSale(GameObject option)
+    {
+        return RequestAndFill(option, "cancelSale", SetGallery);
+    }
+
     IEnumerator MakePurchase(GameObject option)
     {
-        NFTData data = option.GetComponentInChildren<NFTData>();
-        Texture2D tex = option.GetComponentInChildren<Image>().sprite.texture;
-
-        JSONTypes.SerializeTexture exportObj = new JSONTypes.SerializeTexture();
-        exportObj.x = tex.width;
-        exportObj.y = tex.height;
-        exportObj.bytes = ImageConversion.EncodeToPNG(tex);
-        string imageText = JsonUtility.ToJson(exportObj);
-
-        WWWForm form = new WWWForm();
-
-        JSONTypes.SaleEntry entry = new JSONTypes.SaleEntry();
-        entry.userGuid = data.ownderGuid.ToString();
-        entry.artGuid = data.guid.ToString();
-        entry.name = data.name;
-        entry.price = data.price;
-        entry.imageData = imageText;
-        entry.sold = true;
-        entry.forSale = true;
-
-        form.AddField("entry", JsonUtility.ToJson(entry));
-
-        using (UnityWebRequest www = UnityWebRequest.Post("https://us-east-1.aws.data.mongodb-api.com/app/test-nfts-kfnqu/endpoint/buy?secret=foobar&guid=" + gameManager.guid, form))
+        double cost = double.Parse(option.GetComponentInChildren<InputField>().text);
+        if (cost <= gameManager.userData.money)
         {
-
-            yield return www.SendWebRequest();
-
-            if (www.error != null)
-            {
-                Debug.Log("fucked with code: " + www.responseCode);
-                Debug.Log(www.error);
-                Debug.Log(www.downloadHandler.text);
-            }
-            else
-            {
-                Debug.Log(www.downloadHandler.text);
-            }
+            gameManager.userData.money -= cost;
+            gameManager.UpdateMoneyText();
         }
-        BrowseSales();
-        gameManager.UpdateUserData();
+        return RequestAndFill(option, "buy", SetBrowse);
     }
 
     IEnumerator RequestCollection(GameObject option)
     {
-        NFTData data = option.GetComponentInChildren<NFTData>();
+        double profit = double.Parse(option.GetComponentInChildren<InputField>().text);
+        gameManager.userData.money += profit;
+        gameManager.UpdateMoneyText();
+        return RequestAndFill(option, "collectSale", SetGallery);
+    }
 
-        Texture2D tex = option.GetComponentInChildren<Image>().sprite.texture;
+    IEnumerator RequestUpdatePrice(GameObject option)
+    {
+        return RequestAndFill(option, "updatePrice", SetGallery);
+    }
+
+    private void PopulateForm(WWWForm form, GameObject option)
+    {
+        NFTData data = option.GetComponent<NFTData>();
+        Texture2D tex = option.GetComponent<Image>().sprite.texture;
 
         JSONTypes.SerializeTexture exportObj = new JSONTypes.SerializeTexture();
         exportObj.x = tex.width;
@@ -309,37 +167,152 @@ public class Shop : MonoBehaviour
         exportObj.bytes = ImageConversion.EncodeToPNG(tex);
         string imageText = JsonUtility.ToJson(exportObj);
 
-        WWWForm form = new WWWForm();
 
         JSONTypes.SaleEntry entry = new JSONTypes.SaleEntry();
-        entry.userGuid = gameManager.guid.ToString();
+        entry.userGuid = data.ownerGuid.ToString();
         entry.artGuid = data.guid.ToString();
         entry.name = data.name;
         entry.price = data.price;
         entry.imageData = imageText;
         entry.sold = data.sold;
         entry.forSale = data.forSale;
-
-
         form.AddField("entry", JsonUtility.ToJson(entry));
+    }
 
-        using (UnityWebRequest www = UnityWebRequest.Post("https://us-east-1.aws.data.mongodb-api.com/app/test-nfts-kfnqu/endpoint/collectSale?secret=foobar", form))
+    private IEnumerator RequestAndFill(GameObject option, string endpoint, Action<string> response)
+    {
+        WWWForm form = new WWWForm();
+
+        string URL = "https://us-east-1.aws.data.mongodb-api.com/app/test-nfts-kfnqu/endpoint/" + endpoint + "?secret=foobar&guid=" + gameManager.guid;
+
+        if (option != null)
+        {
+            PopulateForm(form, option);
+        }
+        using (UnityWebRequest www = UnityWebRequest.Post(URL, form))
         {
 
             yield return www.SendWebRequest();
 
-            if (www.responseCode != 200)
+            if (www.error != null)
             {
                 Debug.Log("fucked");
                 Debug.Log(www.error);
-                Debug.Log(www.ToString());
+                Debug.Log(www.downloadHandler.text);
             }
             else
             {
-                Debug.Log(www.downloadHandler.text);
+                Debug.Log(endpoint + ": " + www.downloadHandler.text);
+                response(www.downloadHandler.text);
             }
         }
-        gameManager.UpdateUserData();
-        Gallery();
+    }
+
+    private void SetGallery(string serverResponse)
+    {
+        JSONTypes.SaleEntryList entries = JsonUtility.FromJson<JSONTypes.SaleEntryList>(serverResponse);
+
+        for (int i = 0; i < Sellbuttons.Length; i++)
+        {
+            GameObject button = Sellbuttons[i];
+            GalleryItem galleryItem = button.GetComponent<GalleryItem>();
+            // Show your own art
+            if (i < entries.entries.Length)
+            {
+                JSONTypes.SaleEntry entry = entries.entries[i];
+
+                if (entry.sold)
+                {
+                    galleryItem.indicator.gameObject.SetActive(true);
+                    galleryItem.indicator.sprite = soldSprite;
+                }
+                else if (entry.forSale)
+                {
+                    galleryItem.indicator.gameObject.SetActive(true);
+                    galleryItem.indicator.sprite = forSaleSprite;
+                }
+                else
+                {
+                    galleryItem.indicator.gameObject.SetActive(false);
+                }
+
+                JSONTypes.SerializeTexture importObj = JsonUtility.FromJson<JSONTypes.SerializeTexture>(entry.imageData);
+                Texture2D tex = new Texture2D(importObj.x, importObj.y);
+                tex.filterMode = FilterMode.Point;
+                ImageConversion.LoadImage(tex, importObj.bytes);
+                Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), Vector2.one);
+                button.GetComponentInChildren<Image>().sprite = mySprite;
+
+                button.GetComponentInChildren<Text>().text = entry.name + "\n" + entry.price.ToString("$0.00");
+
+                button.GetComponentInChildren<NFTData>().name = entry.name;
+                button.GetComponentInChildren<NFTData>().ownerGuid = System.Guid.Parse(entry.userGuid);
+                button.GetComponentInChildren<NFTData>().guid = System.Guid.Parse(entry.artGuid);
+                button.GetComponentInChildren<NFTData>().price = entry.price;
+                button.GetComponentInChildren<NFTData>().sold = entry.sold;
+                button.GetComponentInChildren<NFTData>().forSale = entry.forSale;
+
+                button.GetComponentInChildren<InputField>().text = entry.price.ToString("0.00");
+
+                if (!entry.sold && !entry.forSale)
+                {
+                    button.GetComponentInChildren<InputField>().interactable = true;
+                }
+                else
+                {
+                    button.GetComponentInChildren<InputField>().interactable = false;
+                }
+
+            }
+            else // Show heist option
+            {
+                galleryItem.indicator.gameObject.SetActive(true);
+                galleryItem.indicator.sprite = heistSprite;
+                double price = Mathf.Round(UnityEngine.Random.value * 10000) / 100.0d;
+
+                button.GetComponentInChildren<Text>().text = "Heist Contract\n" + price.ToString("$0.00");
+                button.GetComponentInChildren<Image>().sprite = heistPreviewSprite;
+                button.GetComponentInChildren<NFTData>().price = price;
+                button.GetComponentInChildren<NFTData>().ownerGuid = gameManager.guid;
+
+                button.GetComponentInChildren<InputField>().text = price.ToString("0.00");
+                button.GetComponentInChildren<InputField>().interactable = false;
+            }
+        }
+    }
+
+    private void SetBrowse(string serverResponse)
+    {
+
+        JSONTypes.SaleEntryList entries = JsonUtility.FromJson<JSONTypes.SaleEntryList>(serverResponse);
+
+        for (int i = 0; i < Buybuttons.Length; i++)
+        {
+            if (i < entries.entries.Length)
+            {
+                GameObject button = Buybuttons[i];
+                JSONTypes.SaleEntry entry = entries.entries[i];
+                JSONTypes.SerializeTexture importObj = JsonUtility.FromJson<JSONTypes.SerializeTexture>(entry.imageData);
+                Texture2D tex = new Texture2D(importObj.x, importObj.y);
+                tex.filterMode = FilterMode.Point;
+                ImageConversion.LoadImage(tex, importObj.bytes);
+                Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), Vector2.one);
+                button.GetComponentInChildren<Image>().sprite = mySprite;
+                button.GetComponentInChildren<Text>().text = entry.name;
+
+                button.GetComponentInChildren<NFTData>().name = entry.name;
+                button.GetComponentInChildren<NFTData>().guid = System.Guid.Parse(entry.artGuid);
+                button.GetComponentInChildren<NFTData>().ownerGuid = System.Guid.Parse(entry.userGuid);
+                button.GetComponentInChildren<NFTData>().price = entry.price;
+                button.GetComponentInChildren<NFTData>().sold = entry.sold;
+                button.GetComponentInChildren<NFTData>().forSale = entry.forSale;
+
+                button.GetComponentInChildren<InputField>().text = entry.price.ToString("0.00");
+                button.GetComponentInChildren<InputField>().interactable = false;
+            } else
+            {
+                ResetButton(Buybuttons[i]);
+            }
+        }
     }
 }

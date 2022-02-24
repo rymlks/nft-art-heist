@@ -6,7 +6,7 @@ public class NFTData : MonoBehaviour
 {
     public string name;
     public System.Guid guid = System.Guid.NewGuid();
-    public System.Guid ownderGuid = System.Guid.Empty;
+    public System.Guid ownerGuid = System.Guid.Empty;
     public double price;
     public bool sold;
     public bool forSale;
@@ -23,6 +23,6 @@ public class NFTData : MonoBehaviour
         sold = copy.sold;
         forSale = copy.forSale;
         guid = System.Guid.NewGuid();
-        ownderGuid = copy.ownderGuid;
+        ownerGuid = copy.ownerGuid;
     }
 }
