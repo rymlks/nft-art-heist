@@ -12,6 +12,7 @@ public class DrawManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
         myImage = GetComponent<Image>();
 
         drawing = new Texture2D(32, 32);  
