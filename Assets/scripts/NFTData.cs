@@ -9,4 +9,12 @@ public class NFTData : MonoBehaviour
     public double price;
     public bool sold;
     public bool forSale;
+
+    public NFTData(NFTData copy)
+    {
+        name = copy.name;
+        price = copy.price;
+        sold = copy.sold;
+        forSale = copy.forSale;
+    }
 }

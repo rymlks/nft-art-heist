@@ -6,11 +6,14 @@ using UnityEngine.Networking;
 
 public class Shop : MonoBehaviour
 {
+    public GameManager gameManager;
+
     public GameObject[] Sellbuttons;
     public GameObject[] Buybuttons;
 
     public Text header;
 
+    public Sprite heistSprite;
 
     [System.Serializable]
     public class SerializeTexture
@@ -57,7 +60,7 @@ public class Shop : MonoBehaviour
         // 89a89392-6aee-4104-b36b-88867c7b54cb
         myGUID = System.Guid.Parse("89a89392-6aee-4104-b36b-88867c7b54cb");
 
-        //Gallery();
+        Gallery();
     }
 
     // Update is called once per frame
@@ -118,24 +121,37 @@ public class Shop : MonoBehaviour
 
                 Debug.Log("Done deserializing list of entries");
                 Debug.Log(entries.entries);
-                for (int i = 0; i < 3 && i < entries.entries.Length; i++)
+                for (int i = 0; i < Sellbuttons.Length; i++)
                 {
-                    Debug.Log(i);
-                    SaleEntry entry = entries.entries[i];
-                    SerializeTexture importObj = JsonUtility.FromJson<SerializeTexture>(entry.imageData);
-                    Texture2D tex = new Texture2D(importObj.x, importObj.y);
-                    tex.filterMode = FilterMode.Point;
-                    ImageConversion.LoadImage(tex, importObj.bytes);
-                    Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), Vector2.one);
-                    Sellbuttons[i].GetComponentInChildren<Image>().sprite = mySprite;
+                    // Show your own art
+                    if (i < entries.entries.Length )
+                    {
+                        SaleEntry entry = entries.entries[i];
+                        SerializeTexture importObj = JsonUtility.FromJson<SerializeTexture>(entry.imageData);
+                        Texture2D tex = new Texture2D(importObj.x, importObj.y);
+                        tex.filterMode = FilterMode.Point;
+                        ImageConversion.LoadImage(tex, importObj.bytes);
+                        Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), Vector2.one);
+                        Sellbuttons[i].GetComponentInChildren<Image>().sprite = mySprite;
 
-                    Sellbuttons[i].GetComponentInChildren<Text>().text = entry.name + "\n$" + entry.price;
+                        Sellbuttons[i].GetComponentInChildren<Text>().text = entry.name + "\n" + entry.price.ToString("$0.00");
 
-                    Sellbuttons[i].GetComponentInChildren<NFTData>().name = entry.name;
-                    Sellbuttons[i].GetComponentInChildren<NFTData>().guid = System.Guid.Parse(entry.artGuid);
-                    Sellbuttons[i].GetComponentInChildren<NFTData>().price = entry.price;
-                    Sellbuttons[i].GetComponentInChildren<NFTData>().sold = entry.sold;
-                    Sellbuttons[i].GetComponentInChildren<NFTData>().forSale = entry.forSale;
+                        Sellbuttons[i].GetComponentInChildren<NFTData>().name = entry.name;
+                        Sellbuttons[i].GetComponentInChildren<NFTData>().guid = System.Guid.Parse(entry.artGuid);
+                        Sellbuttons[i].GetComponentInChildren<NFTData>().price = entry.price;
+                        Sellbuttons[i].GetComponentInChildren<NFTData>().sold = entry.sold;
+                        Sellbuttons[i].GetComponentInChildren<NFTData>().forSale = entry.forSale;
+
+                    } else // Show heist option
+                    {
+                        double price = Mathf.Round(Random.value * 10000) / 100.0d;
+
+                        Sellbuttons[i].GetComponentInChildren<Text>().text = "Heist Contract\n" + price.ToString("$0.00");
+                        Sellbuttons[i].GetComponentInChildren<Image>().sprite = heistSprite;
+                        Sellbuttons[i].GetComponentInChildren<NFTData>().price = price;
+
+
+                    }
                 }
             }
         }
@@ -204,7 +220,7 @@ public class Shop : MonoBehaviour
                     ImageConversion.LoadImage(tex, importObj.bytes);
                     Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), Vector2.one);
                     Buybuttons[i].GetComponentInChildren<Image>().sprite = mySprite;
-                    Buybuttons[i].GetComponentInChildren<Text>().text = entry.name + "\n$" + entry.price;
+                    Buybuttons[i].GetComponentInChildren<Text>().text = entry.name + "\n" + entry.price.ToString("$0.00");
 
                     Buybuttons[i].GetComponentInChildren<NFTData>().name = entry.name;
                     Buybuttons[i].GetComponentInChildren<NFTData>().guid = System.Guid.Parse(entry.artGuid);
@@ -218,16 +234,21 @@ public class Shop : MonoBehaviour
 
     public void Sell(GameObject option)
     {
-        StartCoroutine(MakeSale(option));
+        NFTData data = option.GetComponentInChildren<NFTData>();
+        // Start Heist
+        if (data.guid == System.Guid.Empty)
+        {
+            gameManager.StartDrawing(option);
+        // Sell NFT
+        } else
+        {
+            StartCoroutine(MakeSale(option));
+        }
     }
 
     IEnumerator MakeSale(GameObject option)
     {
         NFTData data = option.GetComponentInChildren<NFTData>();
-        if (data.guid == System.Guid.Empty)
-        {
-            yield break;
-        }
 
         Texture2D tex = option.GetComponentInChildren<Image>().sprite.texture;
 
