@@ -37,6 +37,8 @@ public class JSONTypes : MonoBehaviour
         [SerializeField]
         public double price;
         [SerializeField]
+        public double appraisedValue;
+        [SerializeField]
         public string imageData;
         [SerializeField]
         public bool sold;

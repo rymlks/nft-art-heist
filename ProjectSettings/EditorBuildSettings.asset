@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/RickTest.unity
+    guid: 2792e5fd6a7d2b4478e43faa1c76619c
   m_configObjects: {}
