@@ -116,8 +116,6 @@ public class Shop : MonoBehaviour
 
                 SaleEntryList entries = JsonUtility.FromJson<SaleEntryList>(www.downloadHandler.text);
 
-                Debug.Log("Done deserializing list of entries");
-                Debug.Log(entries.entries);
                 for (int i = 0; i < Sellbuttons.Length; i++)
                 {
                     // Show your own art
@@ -205,11 +203,8 @@ public class Shop : MonoBehaviour
 
                 SaleEntryList entries = JsonUtility.FromJson<SaleEntryList>(www.downloadHandler.text);
 
-                Debug.Log("Done deserializing list of entries");
-                Debug.Log(entries.entries);
                 for (int i=0; i < 3 && i < entries.entries.Length; i++)
                 {
-                    Debug.Log(i);
                     SaleEntry entry = entries.entries[i];
                     SerializeTexture importObj = JsonUtility.FromJson<SerializeTexture>(entry.imageData);
                     Texture2D tex = new Texture2D(importObj.x, importObj.y);
@@ -282,7 +277,7 @@ public class Shop : MonoBehaviour
             }
             else
             {
-                Debug.Log(www.ToString());
+                Debug.Log(www.downloadHandler.text);
             }
         }
     }
@@ -329,15 +324,16 @@ public class Shop : MonoBehaviour
 
             yield return www.SendWebRequest();
 
-            if (www.responseCode != 200)
+            if (www.error != null)
             {
-                Debug.Log("fucked");
+                Debug.Log("fucked with code: " + www.responseCode);
                 Debug.Log(www.error);
-                Debug.Log(www.ToString());
+                Debug.Log(www.downloadHandler.text);
             }
             else
             {
-                Debug.Log(www.ToString());
+                Debug.Log(www.downloadHandler.text);
+                BrowseSales();
             }
         }
     }
