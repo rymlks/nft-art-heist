@@ -47,7 +47,7 @@ public class DrawManager : MonoBehaviour
         {
             for (int y = 0; y < drawing.height; y++)
             {
-                drawing.SetPixel(x, y, Color.white);
+                drawing.SetPixel(x, y, new Color(1, 1, 1, 0.5f));
             }
         }
         drawing.Apply();
