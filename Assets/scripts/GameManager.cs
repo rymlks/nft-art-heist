@@ -31,6 +31,16 @@ public class GameManager : MonoBehaviour
         StartCoroutine(RequestGetUserStart());
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ToggleMenu();
+            UpdateUserData();
+        }
+    }
+
     public void UpdateUserData()
     {
         StartCoroutine(RequestGetUser());
@@ -80,21 +90,12 @@ public class GameManager : MonoBehaviour
             }
         }
         UpdateMoneyText();
-        saleManager.Gallery();
+        saleManager.ShowHeists();
     }
 
     public void UpdateMoneyText()
     {
         moneyText.text = "Money: " + userData.money.ToString("$0.00");
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            ToggleMenu();
-        }
     }
 
     public void ToggleMenu()

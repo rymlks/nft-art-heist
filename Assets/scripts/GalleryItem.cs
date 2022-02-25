@@ -6,9 +6,4 @@ using UnityEngine.UI;
 public class GalleryItem : MonoBehaviour
 {
     public Image indicator;
-
-    public void Start()
-    {
-        indicator.gameObject.SetActive(false);
-    }
 }

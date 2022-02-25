@@ -103,7 +103,7 @@ public class DrawManager : MonoBehaviour
             }
             else
             {
-                Debug.Log(www.ToString());
+                Debug.Log("save" + ": " + www.downloadHandler.text);
             }
         }
 
@@ -181,10 +181,6 @@ public class DrawManager : MonoBehaviour
 
         }
 
-    }
-
-    private void OnMouseDrag()
-    {
     }
 
 }
