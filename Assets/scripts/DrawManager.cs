@@ -90,7 +90,7 @@ public class DrawManager : MonoBehaviour
 
         form.AddField("entry", JsonUtility.ToJson(entry));
 
-        using (UnityWebRequest www = UnityWebRequest.Post("https://us-east-1.aws.data.mongodb-api.com/app/test-nfts-kfnqu/endpoint/save?secret=foobar", form))
+        using (UnityWebRequest www = UnityWebRequest.Post("https://us-east-1.aws.data.mongodb-api.com/app/test-nfts-kfnqu/endpoint/save?secret=foobar&guid="+gameManager.guid, form))
         {
 
             yield return www.SendWebRequest();
@@ -126,7 +126,7 @@ public class DrawManager : MonoBehaviour
         }
         diffValue /= drawing.width * drawing.height;
 
-        Debug.Log(diffValue);
+        //Debug.Log(diffValue);
 
         currentData.price = referenceData.price * 1.1 * (1 - diffValue);
 

@@ -2107,9 +2107,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Sell NFTs
-
-'
+  m_Text: Sell NFTs
 --- !u!222 &1266120734
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2720,9 +2718,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Buy NFTs
-
-'
+  m_Text: Buy NFTs
 --- !u!222 &1553268944
 CanvasRenderer:
   m_ObjectHideFlags: 0
