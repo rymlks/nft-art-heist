@@ -84,11 +84,14 @@ public class Shop : MonoBehaviour
         button.GetComponentInChildren<Image>().sprite = emptySprite;
         button.GetComponentInChildren<Text>().text = "";
         button.GetComponentInChildren<InputField>().text = "";
-        button.GetComponentInChildren<NFTData>().name = "";
-        button.GetComponentInChildren<NFTData>().guid = System.Guid.Empty;
-        button.GetComponentInChildren<NFTData>().price = 0;
-        button.GetComponentInChildren<NFTData>().sold = false;
-        button.GetComponentInChildren<NFTData>().forSale = false;
+
+        NFTData data = button.GetComponentInChildren<NFTData>();
+        data.name = "";
+        data.guid = System.Guid.Empty;
+        data.price = 0;
+        data.sold = false;
+        data.forSale = false;
+        data.isHeist = false;
         button.GetComponent<GalleryItem>().indicator.gameObject.SetActive(false);
     }
 
@@ -96,11 +99,11 @@ public class Shop : MonoBehaviour
     {
         NFTData data = option.GetComponentInChildren<NFTData>();
         // Start Heist
-        if (data.guid == System.Guid.Empty)
+        if (data.isHeist)
         {
             gameManager.StartDrawing(option);
         // Sell NFT
-        } else
+        } else if (data.guid != System.Guid.Empty)
         {
             if (data.sold)
             {
@@ -282,6 +285,7 @@ public class Shop : MonoBehaviour
             button.GetComponentInChildren<Image>().sprite = heistPreviewSprite;
             button.GetComponentInChildren<NFTData>().price = price;
             button.GetComponentInChildren<NFTData>().ownerGuid = gameManager.guid;
+            button.GetComponentInChildren<NFTData>().isHeist = true;
 
             button.GetComponentInChildren<InputField>().text = price.ToString("0.00");
             button.GetComponentInChildren<InputField>().interactable = false;

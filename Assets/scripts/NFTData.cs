@@ -11,6 +11,8 @@ public class NFTData : MonoBehaviour
     public bool sold;
     public bool forSale;
 
+    public bool isHeist;
+
     public NFTData(NFTData copy)
     {
         Copy(copy);
@@ -24,5 +26,6 @@ public class NFTData : MonoBehaviour
         forSale = copy.forSale;
         guid = System.Guid.NewGuid();
         ownerGuid = copy.ownerGuid;
+        isHeist = copy.isHeist;
     }
 }

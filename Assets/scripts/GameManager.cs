@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public GameObject menuView;
     public GameObject galleryView;
     public GameObject drawView;
+    public GameObject upgradeView;
 
     public Shop saleManager;
     public DrawManager drawManager;
@@ -27,6 +28,7 @@ public class GameManager : MonoBehaviour
         menuView.SetActive(true);
         galleryView.SetActive(true);
         drawView.SetActive(false);
+        upgradeView.SetActive(false);
 
         StartCoroutine(RequestGetUserStart());
     }
@@ -113,5 +115,15 @@ public class GameManager : MonoBehaviour
     {
         drawView.SetActive(false);
         saleManager.Gallery();
+    }
+
+    public void OpenUpgradeView()
+    {
+        upgradeView.SetActive(true);
+    }
+
+    public void CloseUpgradeView()
+    {
+        upgradeView.SetActive(false);
     }
 }
