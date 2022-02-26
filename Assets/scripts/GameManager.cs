@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
 
     public Text moneyText;
 
+    public Toggle muteButton;
+
     public System.Guid guid = System.Guid.NewGuid();
 
     public JSONTypes.UserData userData;
