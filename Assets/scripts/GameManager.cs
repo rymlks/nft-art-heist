@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public GameObject menuView;
     public GameObject galleryView;
     public GameObject drawView;
+    public GameObject upgradeView;
 
     public Shop saleManager;
     public DrawManager drawManager;
@@ -18,17 +19,41 @@ public class GameManager : MonoBehaviour
     public System.Guid guid = System.Guid.NewGuid();
 
     public JSONTypes.UserData userData;
+    public List<NFTData> NFTs;
 
     // Start is called before the first frame update
     void Start()
     {
         // 89a89392-6aee-4104-b36b-88867c7b54cb
-        guid = System.Guid.Parse("89a89392-6aee-4104-b36b-88867c7b54cb");
+        //guid = System.Guid.Parse("89a89392-6aee-4104-b36b-88867c7b54cb");
         menuView.SetActive(true);
         galleryView.SetActive(true);
         drawView.SetActive(false);
+        upgradeView.SetActive(false);
+
+        NFTs = new List<NFTData>();
+
+        string _guid = PlayerPrefs.GetString("guid", null);
+        Debug.Log(_guid);
+
+        if (_guid != null && !_guid.Equals(""))
+        {
+            guid = System.Guid.Parse(_guid);
+        }
+
+        PlayerPrefs.SetString("guid", guid.ToString());
 
         StartCoroutine(RequestGetUserStart());
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ToggleMenu();
+            UpdateUserData();
+        }
     }
 
     public void UpdateUserData()
@@ -80,21 +105,12 @@ public class GameManager : MonoBehaviour
             }
         }
         UpdateMoneyText();
-        saleManager.Gallery();
+        saleManager.ShowHeists();
     }
 
     public void UpdateMoneyText()
     {
         moneyText.text = "Money: " + userData.money.ToString("$0.00");
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            ToggleMenu();
-        }
     }
 
     public void ToggleMenu()
@@ -112,5 +128,23 @@ public class GameManager : MonoBehaviour
     {
         drawView.SetActive(false);
         saleManager.Gallery();
+    }
+
+    public void OpenUpgradeView()
+    {
+        upgradeView.SetActive(true);
+    }
+
+    public void CloseUpgradeView()
+    {
+        upgradeView.SetActive(false);
+    }
+
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+        Application.Quit();
     }
 }
