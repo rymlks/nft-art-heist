@@ -168,6 +168,9 @@ public class Shop : MonoBehaviour
         if (data.guid == System.Guid.Empty)
         {
             Debug.Log("Cannot buy empty NFT");
+        } else if (data.price > gameManager.userData.money)
+        {
+            Debug.Log("Not enough money");
         }
         else
         {

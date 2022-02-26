@@ -11,9 +11,17 @@ public class DrawManager : MonoBehaviour
     public Image myImage;
     public Text myImageText;
     public Text countdownText;
+    public Text FlavorText;
 
     public Image previewImage;
     public Text previewText;
+
+    public Slider redSlider;
+    public Slider greenSlider;
+    public Slider blueSlider;
+    public Slider alphaSlider;
+    public Slider sizeSlider;
+
 
     public GameObject tutorialPane;
 
@@ -24,6 +32,8 @@ public class DrawManager : MonoBehaviour
 
     NFTData currentData;
     NFTData referenceData;
+
+    bool stroking = false;
 
     // Start is called before the first frame update
     void Start()
@@ -59,7 +69,7 @@ public class DrawManager : MonoBehaviour
         {
             for (int y = 0; y < drawing.height; y++)
             {
-                drawing.SetPixel(x, y, new Color(1, 1, 1, 1f));
+                drawing.SetPixel(x, y, new Color(0,0,0,0));
             }
         }
         drawing.Apply();
@@ -133,6 +143,11 @@ public class DrawManager : MonoBehaviour
                 Color theirColor = reference.GetPixel(reference.width * x / drawing.width, reference.height * y / drawing.height);
 
                 Color diff = myColor - theirColor;
+
+                if (myColor == Color.white)
+                {
+                    diff = Color.white;
+                }
                 diffValue += (Mathf.Abs(diff.r) + Mathf.Abs(diff.g) + Mathf.Abs(diff.b) + Mathf.Abs(diff.a)) / 4.0;
             }
         }
@@ -158,6 +173,19 @@ public class DrawManager : MonoBehaviour
             int seconds = secondsLeft % 60;
             countdownText.text = string.Format("{0}:{1}", minutes, seconds.ToString("00"));
             updateCurrentPrice();
+
+            if (secondsLeft > 20)
+            {
+                FlavorText.text = "Forging";
+            }
+            else if (secondsLeft > 10)
+            {
+                FlavorText.text = "Hacking Blockchain";
+            }
+            else
+            {
+                FlavorText.text = "Downloading Pixels";
+            }
 
             secondsLeft--;
             yield return new WaitForSeconds(1);
@@ -187,13 +215,38 @@ public class DrawManager : MonoBehaviour
         translatedMousePos.x = Mathf.Floor(width * translatedMousePos.x/newRect.width);
         translatedMousePos.y =  Mathf.Floor(height * translatedMousePos.y/newRect.height);
 
-        bool widthValid = translatedMousePos.x >=0 && translatedMousePos.x < drawing.width;
-        bool heightValid = translatedMousePos.y >=0 && translatedMousePos.y < drawing.height;
-        bool isMouseDown = Input.GetMouseButton(0);
+        bool widthValid = translatedMousePos.x >= 0 && translatedMousePos.x < drawing.width;
+        bool heightValid = translatedMousePos.y >= 0 && translatedMousePos.y < drawing.height;
+        if (Input.GetMouseButtonDown(0) && widthValid && heightValid)
+        {
+            stroking = true;
+        }
 
-        if (widthValid && heightValid && isMouseDown) {
+        if (Input.GetMouseButtonUp(0))
+        {
+            stroking = false;
+        }
 
-            drawing.SetPixel((int) translatedMousePos.x, (int) translatedMousePos.y, Color.black);
+        if (stroking) {
+
+            int penSize = (int)sizeSlider.value;
+            for (int x = -penSize; x <= penSize; x++)
+            {
+                for (int y = -penSize; y <= penSize; y++)
+                {
+                    int drawX = (int)translatedMousePos.x + x;
+                    int drawY = (int)translatedMousePos.y + y;
+
+                    bool widthValid_ = drawX >= 0 && drawX < drawing.width;
+                    bool heightValid_ = drawY >= 0 && drawY < drawing.height;
+
+                    if (widthValid_ && heightValid_)
+                    {
+                        drawing.SetPixel(drawX, drawY, new Color(redSlider.value, greenSlider.value, blueSlider.value, 1));
+                    }
+                }
+            }
+
             drawing.Apply();
 
         }
