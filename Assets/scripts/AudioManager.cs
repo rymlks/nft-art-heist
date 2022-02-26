@@ -45,6 +45,8 @@ public class AudioManager : MonoBehaviour
 
             audioSource.Play();
         }
+
+        if (CheckClipEnded()) StartRandomMusic();
     }
     public void StartRandomMusic() {
         audioSource.clip = currentClip = audioClips[currentClipIndex = (int) Random.Range(0f, audioClips.Length)];
@@ -52,7 +54,7 @@ public class AudioManager : MonoBehaviour
     }
 
     public bool CheckClipEnded() {
-        return audioSource.time == currentClip.length;
+        return audioSource.time >= currentClip.length;
     }
 
     public void EndMusic() {
