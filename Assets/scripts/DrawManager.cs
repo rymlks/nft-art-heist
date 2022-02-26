@@ -52,6 +52,10 @@ public class DrawManager : MonoBehaviour
 
     public void StartDrawing(GameObject option)
     {
+        redSlider.interactable = true;
+        greenSlider.interactable = true;
+        blueSlider.interactable = true;
+        sizeSlider.interactable = true;
         secondsLeft = 30;
         referenceData = option.GetComponentInChildren<NFTData>();
         currentData = option.AddComponent<NFTData>();
@@ -92,6 +96,17 @@ public class DrawManager : MonoBehaviour
 
     IEnumerator SaveDrawing()
     {
+        redSlider.interactable = false;
+        greenSlider.interactable = false;
+        blueSlider.interactable = false;
+        sizeSlider.interactable = false;
+
+        FlavorText.text = "Finalizing.";
+        yield return new WaitForSeconds(2);
+        FlavorText.text = "Finalizing..";
+        yield return new WaitForSeconds(2);
+        FlavorText.text = "Finalizing...";
+        yield return new WaitForSeconds(2);
 
         JSONTypes.SerializeTexture exportObj = new JSONTypes.SerializeTexture();
         exportObj.x = drawing.width;
@@ -155,7 +170,7 @@ public class DrawManager : MonoBehaviour
 
         //Debug.Log(diffValue);
 
-        currentData.price = referenceData.price * 1.1 * (1 - diffValue);
+        currentData.price = referenceData.price * (1 - diffValue);
 
         myImageText.text = currentData.name + "\n" + currentData.price.ToString("$0.00");
     }
