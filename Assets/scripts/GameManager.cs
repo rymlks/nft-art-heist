@@ -19,16 +19,20 @@ public class GameManager : MonoBehaviour
     public System.Guid guid = System.Guid.NewGuid();
 
     public JSONTypes.UserData userData;
+    public List<NFTData> NFTs;
 
     // Start is called before the first frame update
     void Start()
     {
         // 89a89392-6aee-4104-b36b-88867c7b54cb
-        guid = System.Guid.Parse("89a89392-6aee-4104-b36b-88867c7b54cb");
+        //guid = System.Guid.Parse("89a89392-6aee-4104-b36b-88867c7b54cb");
         menuView.SetActive(true);
         galleryView.SetActive(true);
         drawView.SetActive(false);
         upgradeView.SetActive(false);
+
+
+        NFTs = new List<NFTData>();
 
         StartCoroutine(RequestGetUserStart());
     }

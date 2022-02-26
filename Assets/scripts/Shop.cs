@@ -17,15 +17,38 @@ public class Shop : MonoBehaviour
     public Sprite heistSprite;
     public Sprite soldSprite;
     public Sprite forSaleSprite;
+    public Sprite buySprite;
     public Sprite emptySprite;
 
     public Sprite heistPreviewSprite;
 
+    public GameObject HeistTutorialPane;
+    public GameObject SellTutorialPane;
+    public GameObject BuyTutorialPane;
+
+    public Button buyButton;
+
     private bool success = true;
+
+    private bool sellTutorial = true;
+    private bool buyTutorial = true;
+
+    public void Start()
+    {
+        HeistTutorialPane.SetActive(true);
+        SellTutorialPane.SetActive(false);
+        BuyTutorialPane.SetActive(false);
+    }
 
     public void Gallery()
     {
         header.text = "Click an NFT to\nmake a sale offer\n";
+
+        if (sellTutorial)
+        {
+            SellTutorialPane.SetActive(true);
+            sellTutorial = false;
+        }
 
         foreach (GameObject button in Sellbuttons)
         {
@@ -44,6 +67,13 @@ public class Shop : MonoBehaviour
 
     public void BrowseSales()
     {
+
+        if (buyTutorial)
+        {
+            BuyTutorialPane.SetActive(true);
+            buyTutorial = false;
+        }
+
         header.text = "Click an NFT to\nmake a buy offer";
         foreach (GameObject button in Sellbuttons)
         {
@@ -79,11 +109,18 @@ public class Shop : MonoBehaviour
         SetHeists();
     }
 
+    public void DisableBuying()
+    {
+        buyButton.interactable = false;
+        ShowHeists();
+    }
+
     private void ResetButton(GameObject button)
     {
         button.GetComponentInChildren<Image>().sprite = emptySprite;
         button.GetComponentInChildren<Text>().text = "";
         button.GetComponentInChildren<InputField>().text = "";
+        button.GetComponentInChildren<InputField>().interactable = false;
 
         NFTData data = button.GetComponentInChildren<NFTData>();
         data.name = "";
@@ -92,6 +129,7 @@ public class Shop : MonoBehaviour
         data.sold = false;
         data.forSale = false;
         data.isHeist = false;
+        data.texture = null;
         button.GetComponent<GalleryItem>().indicator.gameObject.SetActive(false);
     }
 
@@ -111,6 +149,12 @@ public class Shop : MonoBehaviour
             } else if (!data.forSale)
             {
                 StartCoroutine(MakeSale(option));
+
+                if (data.price < data.appraisedValue * 1.1)
+                {
+                    gameManager.userData.money += data.price;
+                    gameManager.UpdateMoneyText();
+                }
             } else
             {
                 StartCoroutine(CancelSale(option));
@@ -212,6 +256,7 @@ public class Shop : MonoBehaviour
     {
         JSONTypes.SaleEntryList entries = JsonUtility.FromJson<JSONTypes.SaleEntryList>(serverResponse);
 
+        gameManager.NFTs = new List<NFTData>();
         for (int i = 0; i < Sellbuttons.Length; i++)
         {
             GameObject button = Sellbuttons[i];
@@ -239,18 +284,25 @@ public class Shop : MonoBehaviour
                 JSONTypes.SerializeTexture importObj = JsonUtility.FromJson<JSONTypes.SerializeTexture>(entry.imageData);
                 Texture2D tex = new Texture2D(importObj.x, importObj.y);
                 tex.filterMode = FilterMode.Point;
+
+
                 ImageConversion.LoadImage(tex, importObj.bytes);
                 Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), Vector2.one);
                 button.GetComponentInChildren<Image>().sprite = mySprite;
 
-                button.GetComponentInChildren<Text>().text = entry.name + "\n" + entry.price.ToString("$0.00");
+                button.GetComponentInChildren<Text>().text = "Appraised: " + entry.appraisedValue.ToString("$0.00");
 
                 button.GetComponentInChildren<NFTData>().name = entry.name;
                 button.GetComponentInChildren<NFTData>().ownerGuid = System.Guid.Parse(entry.userGuid);
                 button.GetComponentInChildren<NFTData>().guid = System.Guid.Parse(entry.artGuid);
                 button.GetComponentInChildren<NFTData>().price = entry.price;
+                button.GetComponentInChildren<NFTData>().appraisedValue = entry.appraisedValue;
                 button.GetComponentInChildren<NFTData>().sold = entry.sold;
                 button.GetComponentInChildren<NFTData>().forSale = entry.forSale;
+                button.GetComponentInChildren<NFTData>().texture = tex;
+
+
+                gameManager.NFTs.Add(new NFTData(button.GetComponentInChildren<NFTData>()));
 
                 button.GetComponentInChildren<InputField>().text = entry.price.ToString("0.00");
 
@@ -273,19 +325,40 @@ public class Shop : MonoBehaviour
 
     private void SetHeists()
     {
+        int idx = 0;
         for (int i = 0; i < Sellbuttons.Length; i++)
         {
             GameObject button = Sellbuttons[i];
             GalleryItem galleryItem = button.GetComponent<GalleryItem>();
             galleryItem.indicator.gameObject.SetActive(true);
             galleryItem.indicator.sprite = heistSprite;
-            double price = Mathf.Round(UnityEngine.Random.value * 10000) / 100.0d;
+
+            float rnd = UnityEngine.Random.value;
+            double price;
+
+
+            if (rnd < 0.5 && idx < gameManager.NFTs.Count)
+            {
+                Texture2D tex = gameManager.NFTs[idx].texture;
+                button.GetComponentInChildren<Image>().sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), Vector2.one);
+                price = gameManager.NFTs[idx].appraisedValue;
+                idx++;
+            } else
+            {
+                button.GetComponentInChildren<Image>().sprite = heistPreviewSprite;
+                price = Mathf.Round(UnityEngine.Random.value * 10000) / 100.0d;
+            }
+
+
+
+
 
             button.GetComponentInChildren<Text>().text = "Heist Contract\n" + price.ToString("$0.00");
-            button.GetComponentInChildren<Image>().sprite = heistPreviewSprite;
             button.GetComponentInChildren<NFTData>().price = price;
+            button.GetComponentInChildren<NFTData>().appraisedValue = price;
             button.GetComponentInChildren<NFTData>().ownerGuid = gameManager.guid;
             button.GetComponentInChildren<NFTData>().isHeist = true;
+            button.GetComponentInChildren<NFTData>().texture = heistPreviewSprite.texture;
 
             button.GetComponentInChildren<InputField>().text = price.ToString("0.00");
             button.GetComponentInChildren<InputField>().interactable = false;
@@ -300,6 +373,7 @@ public class Shop : MonoBehaviour
         for (int i = 0; i < Buybuttons.Length; i++)
         {
             GameObject button = Buybuttons[i];
+            GalleryItem galleryItem = button.GetComponent<GalleryItem>();
             if (i < entries.entries.Length)
             {
                 JSONTypes.SaleEntry entry = entries.entries[i];
@@ -307,16 +381,22 @@ public class Shop : MonoBehaviour
                 Texture2D tex = new Texture2D(importObj.x, importObj.y);
                 tex.filterMode = FilterMode.Point;
                 ImageConversion.LoadImage(tex, importObj.bytes);
+
+                galleryItem.indicator.sprite = buySprite;
+                galleryItem.indicator.gameObject.SetActive(true);
+
                 Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), Vector2.one);
                 button.GetComponentInChildren<Image>().sprite = mySprite;
-                button.GetComponentInChildren<Text>().text = entry.name;
+                button.GetComponentInChildren<Text>().text = "Appraised: " + entry.appraisedValue.ToString("$0.00");
 
                 button.GetComponentInChildren<NFTData>().name = entry.name;
                 button.GetComponentInChildren<NFTData>().guid = System.Guid.Parse(entry.artGuid);
                 button.GetComponentInChildren<NFTData>().ownerGuid = System.Guid.Parse(entry.userGuid);
                 button.GetComponentInChildren<NFTData>().price = entry.price;
+                button.GetComponentInChildren<NFTData>().appraisedValue = entry.appraisedValue;
                 button.GetComponentInChildren<NFTData>().sold = entry.sold;
                 button.GetComponentInChildren<NFTData>().forSale = entry.forSale;
+                button.GetComponentInChildren<NFTData>().texture = tex;
 
                 button.GetComponentInChildren<InputField>().text = entry.price.ToString("0.00");
                 button.GetComponentInChildren<InputField>().interactable = false;

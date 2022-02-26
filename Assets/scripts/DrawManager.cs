@@ -15,6 +15,8 @@ public class DrawManager : MonoBehaviour
     public Image previewImage;
     public Text previewText;
 
+    public GameObject tutorialPane;
+
     Texture2D drawing;
     Texture2D reference;
     bool drawingActive = false;
@@ -26,6 +28,16 @@ public class DrawManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        tutorialPane.SetActive(true);
+    }
+
+    public void ResetTimer()
+    {
+        secondsLeft = 30;
+        int minutes = secondsLeft / 60;
+        int seconds = secondsLeft % 60;
+        countdownText.text = string.Format("{0}:{1}", minutes, seconds.ToString("00"));
+
     }
 
     public void StartDrawing(GameObject option)
@@ -47,7 +59,7 @@ public class DrawManager : MonoBehaviour
         {
             for (int y = 0; y < drawing.height; y++)
             {
-                drawing.SetPixel(x, y, new Color(1, 1, 1, 0.5f));
+                drawing.SetPixel(x, y, new Color(1, 1, 1, 1f));
             }
         }
         drawing.Apply();
@@ -137,6 +149,11 @@ public class DrawManager : MonoBehaviour
     {
         while (secondsLeft > 0)
         {
+            if (tutorialPane.activeSelf)
+            {
+                yield return new WaitForSeconds(1);
+                continue;
+            }
             int minutes = secondsLeft / 60;
             int seconds = secondsLeft % 60;
             countdownText.text = string.Format("{0}:{1}", minutes, seconds.ToString("00"));
