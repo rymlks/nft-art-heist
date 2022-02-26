@@ -348,8 +348,8 @@ public class Shop : MonoBehaviour
                 idx++;
             } else
             {
-                button.GetComponentInChildren<Image>().sprite = heistPreviewSprite;
-                price = Mathf.Round(UnityEngine.Random.value * 10000) / 100.0d;
+                button.GetComponentInChildren<NFTGenerator>().GenerateNFT();
+                price = button.GetComponentInChildren<NFTGenerator>().value;
             }
 
 

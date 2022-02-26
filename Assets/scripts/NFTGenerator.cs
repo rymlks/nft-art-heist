@@ -11,30 +11,27 @@ public class NFTGenerator : MonoBehaviour
     public List<Texture2D> bottom_nft_list;
     public List<Color> palette;
 
-    private Image myImage;
+    public double value;
 
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-        myImage = GetComponent<Image>();
-        GenerateNFT(top_nft_list, middle_nft_list, bottom_nft_list);
-        
-    }
-
-    void GenerateNFT(List<Texture2D> top_NFT_element, List<Texture2D> middle_NFT_element, List<Texture2D> bottom_NFT_element) {
+    public void GenerateNFT() {
 
         //create texture
 
-        float topNFTListCount = top_NFT_element.Count;
-        float middleNFTnftListCount = middle_NFT_element.Count;
-        float bottomNFTnftListCount = bottom_NFT_element.Count;
+        float topNFTListCount = top_nft_list.Count;
+        float middleNFTnftListCount = middle_nft_list.Count;
+        float bottomNFTnftListCount = bottom_nft_list.Count;
 
-        int randomTopPiece = (int) Random.Range(0f, topNFTListCount);
-        int randomMiddlePiece = (int) Random.Range(0f, middleNFTnftListCount);
-        int randomBottomPiece = (int) Random.Range(0f, bottomNFTnftListCount);
+        int randomTopPiece = (int) Mathf.Abs(RandomGaussian(-topNFTListCount + 0.5f, topNFTListCount - 0.5f ));
+        int randomMiddlePiece = (int) Mathf.Abs(RandomGaussian(-middleNFTnftListCount + 0.5f, middleNFTnftListCount - 0.5f));
+        int randomBottomPiece = (int)Mathf.Abs(RandomGaussian(-bottomNFTnftListCount + 0.5f, bottomNFTnftListCount - 0.5f));
+        int randombg = (int)Mathf.Abs(RandomGaussian(-palette.Count + 0.5f, palette.Count - 0.5f));
+
+        float exp = 2.5f;
+        value = 2.5;
+        value *= Mathf.Pow(exp, randomTopPiece);
+        value *= Mathf.Pow(exp, randomMiddlePiece);
+        value *= Mathf.Pow(exp, randomBottomPiece);
+        value *= Mathf.Pow(exp, randombg);
 
         Debug.Log("randomBottomPiece value is equal to " + randomTopPiece);
         Debug.Log("randomMiddlePiece value is equal to " + randomMiddlePiece);
@@ -43,11 +40,13 @@ public class NFTGenerator : MonoBehaviour
         Texture2D NFT = new Texture2D(32, 32);
         NFT.filterMode = FilterMode.Point;
 
+        Color bg = palette[randombg];
+
         for (int x = 0; x < NFT.width; x++)
         {
             for (int y = 0; y < NFT.height; y++)
             {
-                NFT.SetPixel(x, y, new Color(1, 1, 1, 1f));
+                NFT.SetPixel(x, y, bg);
   
             }
         }
@@ -59,21 +58,21 @@ public class NFTGenerator : MonoBehaviour
             for (int y = 0; y < NFT.height; y++)
             {
 
-                if (top_NFT_element[randomTopPiece].GetPixel(x,y).a == 1) {
+                if (top_nft_list[randomTopPiece].GetPixel(x,y).a == 1) {
 
-                    NFT.SetPixel(x,y, top_NFT_element[randomTopPiece].GetPixel(x,y));
-
-                }
-                
-                if (middle_NFT_element[randomMiddlePiece].GetPixel(x,y).a == 1) {
-
-                    NFT.SetPixel(x,y, middle_NFT_element[randomMiddlePiece].GetPixel(x,y));
+                    NFT.SetPixel(x,y, top_nft_list[randomTopPiece].GetPixel(x,y));
 
                 }
                 
-                if (bottom_NFT_element[randomBottomPiece].GetPixel(x,y).a == 1) {
+                if (middle_nft_list[randomMiddlePiece].GetPixel(x,y).a == 1) {
 
-                    NFT.SetPixel(x,y, bottom_NFT_element[randomBottomPiece].GetPixel(x,y));
+                    NFT.SetPixel(x,y, middle_nft_list[randomMiddlePiece].GetPixel(x,y));
+
+                }
+                
+                if (bottom_nft_list[randomBottomPiece].GetPixel(x,y).a == 1) {
+
+                    NFT.SetPixel(x,y, bottom_nft_list[randomBottomPiece].GetPixel(x,y));
 
                 }
 
@@ -93,10 +92,32 @@ public class NFTGenerator : MonoBehaviour
         Sprite mySprite = Sprite.Create(NFT, new Rect(0.0f, 0.0f, NFT.width, NFT.height), Vector2.one);
 
         //assign sprite to image
+        Image myImage = GetComponent<Image>();
         myImage.sprite = mySprite;
         myImage.color = Color.white;
 
     }
 
-   
+    public static float RandomGaussian(float minValue = 0.0f, float maxValue = 1.0f)
+    {
+        float u, v, S;
+
+        do
+        {
+            u = 2.0f * UnityEngine.Random.value - 1.0f;
+            v = 2.0f * UnityEngine.Random.value - 1.0f;
+            S = u * u + v * v;
+        }
+        while (S >= 1.0f);
+
+        // Standard Normal Distribution
+        float std = u * Mathf.Sqrt(-2.0f * Mathf.Log(S) / S);
+
+        // Normal Distribution centered between the min and max value
+        // and clamped following the "three-sigma rule"
+        float mean = (minValue + maxValue) / 2.0f;
+        float sigma = (maxValue - mean) / 3.0f;
+        return Mathf.Clamp(std * sigma + mean, minValue, maxValue);
+    }
+
 }
