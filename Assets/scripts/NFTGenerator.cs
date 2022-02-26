@@ -33,9 +33,9 @@ public class NFTGenerator : MonoBehaviour
         value *= Mathf.Pow(exp, randomBottomPiece);
         value *= Mathf.Pow(exp, randombg);
 
-        Debug.Log("randomBottomPiece value is equal to " + randomTopPiece);
-        Debug.Log("randomMiddlePiece value is equal to " + randomMiddlePiece);
-        Debug.Log("randomBottomPiece value is equal to " + randomBottomPiece);
+        //Debug.Log("randomBottomPiece value is equal to " + randomTopPiece);
+        //Debug.Log("randomMiddlePiece value is equal to " + randomMiddlePiece);
+        //Debug.Log("randomBottomPiece value is equal to " + randomBottomPiece);
 
         Texture2D NFT = new Texture2D(32, 32);
         NFT.filterMode = FilterMode.Point;
