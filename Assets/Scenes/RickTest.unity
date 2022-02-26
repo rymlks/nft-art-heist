@@ -5908,6 +5908,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d22cbeaf15cf144ba0834b1b091ad28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 139155020}
+  muteToggle: {fileID: 637604480}
   audioSource: {fileID: 436374208}
   audioClips:
   - {fileID: 8300000, guid: 899b4807143c8bf4bbfbda83ca8f8f4e, type: 3}
@@ -5920,6 +5922,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5b215b39f4eef92479d4ab75083b6a0a, type: 3}
   - {fileID: 8300000, guid: 49df202c95a36d24e82a95b354094fb1, type: 3}
   - {fileID: 8300000, guid: 18bbcc382b104924bbcf42820a3a8690, type: 3}
+  currentClipIndex: 0
+  currentClip: {fileID: 0}
 --- !u!4 &1560859580
 Transform:
   m_ObjectHideFlags: 0
