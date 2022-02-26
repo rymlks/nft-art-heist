@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
 
     public Shop saleManager;
     public DrawManager drawManager;
+    public AudioManager audioManager;
 
     public Text moneyText;
 
@@ -120,12 +121,14 @@ public class GameManager : MonoBehaviour
 
     public void StartDrawing(GameObject option)
     {
+        audioManager.StartRandomMusic();
         drawView.SetActive(true);
         drawManager.StartDrawing(option);
     }
 
     public void EndDrawing(Texture2D drawing)
     {
+        audioManager.EndMusic();
         drawView.SetActive(false);
         saleManager.Gallery();
     }
