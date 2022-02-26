@@ -150,7 +150,7 @@ public class Shop : MonoBehaviour
             {
                 StartCoroutine(MakeSale(option));
 
-                if (data.price < data.appraisedValue * 1.1)
+                if (data.price < data.appraisedValue * 1.1 && data.price <= 100)
                 {
                     gameManager.userData.money += data.price;
                     gameManager.UpdateMoneyText();
