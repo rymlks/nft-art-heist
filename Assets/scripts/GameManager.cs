@@ -31,8 +31,17 @@ public class GameManager : MonoBehaviour
         drawView.SetActive(false);
         upgradeView.SetActive(false);
 
-
         NFTs = new List<NFTData>();
+
+        string _guid = PlayerPrefs.GetString("guid", null);
+        Debug.Log(_guid);
+
+        if (_guid != null && !_guid.Equals(""))
+        {
+            guid = System.Guid.Parse(_guid);
+        }
+
+        PlayerPrefs.SetString("guid", guid.ToString());
 
         StartCoroutine(RequestGetUserStart());
     }
