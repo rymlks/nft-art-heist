@@ -47,6 +47,8 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetString("guid", guid.ToString());
 
         StartCoroutine(RequestGetUserStart());
+
+        audioManager.StartRandomMusic();
     }
 
     // Update is called once per frame
@@ -123,14 +125,14 @@ public class GameManager : MonoBehaviour
 
     public void StartDrawing(GameObject option)
     {
-        audioManager.StartRandomMusic();
+        //audioManager.StartRandomMusic();
         drawView.SetActive(true);
         drawManager.StartDrawing(option);
     }
 
     public void EndDrawing(Texture2D drawing)
     {
-        audioManager.EndMusic();
+        //audioManager.EndMusic();
         drawView.SetActive(false);
         saleManager.Gallery();
     }
