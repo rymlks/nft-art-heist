@@ -37,12 +37,10 @@ public class DrawManager : MonoBehaviour
     bool stroking = false;
     private Coroutine countdownCoroutine;
 
+    bool tutorial = true;
     // Start is called before the first frame update
     void Start()
     {
-        tutorialPane.SetActive(true);
-
-
         redSlider.interactable = false;
         greenSlider.interactable = false;
         blueSlider.interactable = false;
@@ -70,6 +68,11 @@ public class DrawManager : MonoBehaviour
 
     public void StartDrawing(GameObject option)
     {
+        if (tutorial && gameManager.first)
+        {
+            tutorial = false;
+            tutorialPane.SetActive(true);
+        }
         endButton.interactable = true;
         foreach (string upgrade in gameManager.userData.upgrades)
         {
@@ -105,7 +108,7 @@ public class DrawManager : MonoBehaviour
         {
             for (int y = 0; y < drawing.height; y++)
             {
-                drawing.SetPixel(x, y, new Color(0,0,0,0));
+                drawing.SetPixel(x, y, Color.white);
             }
         }
         drawing.Apply();

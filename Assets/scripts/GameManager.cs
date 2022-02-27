@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
 
     public Shop saleManager;
     public DrawManager drawManager;
+    public UpgradeManager upgradeManager;
     public AudioManager audioManager;
 
     public Text moneyText;
@@ -21,8 +22,13 @@ public class GameManager : MonoBehaviour
 
     public System.Guid guid = System.Guid.NewGuid();
 
+    public Button sellButton;
+    public Button upgradeButton;
+
     public JSONTypes.UserData userData;
     public List<NFTData> NFTs;
+
+    public bool first = false;
 
     // Start is called before the first frame update
     void Start()
@@ -42,6 +48,11 @@ public class GameManager : MonoBehaviour
         if (_guid != null && !_guid.Equals(""))
         {
             guid = System.Guid.Parse(_guid);
+        } else
+        {
+            first = true;
+            sellButton.interactable = false;
+            upgradeButton.interactable = false;
         }
 
         PlayerPrefs.SetString("guid", guid.ToString());
@@ -59,6 +70,23 @@ public class GameManager : MonoBehaviour
             ToggleMenu();
             UpdateUserData();
         }
+    }
+
+    public void ShowTutorialsAgain()
+    {
+        first = true;
+        saleManager.buyTutorial = true;
+        saleManager.sellTutorial = true;
+        saleManager.HeistTutorialPane.SetActive(true);
+        saleManager.ShowHeists();
+
+        menuView.SetActive(true);
+        galleryView.SetActive(true);
+        drawView.SetActive(false);
+        upgradeView.SetActive(false);
+
+        sellButton.interactable = false;
+        upgradeButton.interactable = false;
     }
 
     public void UpdateUserData()
@@ -135,10 +163,17 @@ public class GameManager : MonoBehaviour
         //audioManager.EndMusic();
         drawView.SetActive(false);
         saleManager.Gallery();
+
+        if (first)
+        {
+            sellButton.interactable = true;
+            upgradeButton.interactable = true;
+        }
     }
 
     public void OpenUpgradeView()
     {
+        upgradeManager.Show();
         upgradeView.SetActive(true);
     }
 

@@ -30,12 +30,15 @@ public class Shop : MonoBehaviour
 
     private bool success = true;
 
-    private bool sellTutorial = true;
-    private bool buyTutorial = true;
+    public bool sellTutorial = true;
+    public bool buyTutorial = true;
 
     public void Start()
     {
-        HeistTutorialPane.SetActive(true);
+        if (gameManager.first)
+        {
+            HeistTutorialPane.SetActive(true);
+        }
         SellTutorialPane.SetActive(false);
         BuyTutorialPane.SetActive(false);
     }
@@ -44,7 +47,7 @@ public class Shop : MonoBehaviour
     {
         header.text = "Click an NFT to\nmake a sale offer\n";
 
-        if (sellTutorial)
+        if (sellTutorial && gameManager.first)
         {
             SellTutorialPane.SetActive(true);
             sellTutorial = false;
@@ -356,7 +359,7 @@ public class Shop : MonoBehaviour
 
 
 
-            button.GetComponentInChildren<Text>().text = "Heist Contract\n" + price.ToString("$0.00");
+            button.GetComponentInChildren<Text>().text = "Heist Contract";
             button.GetComponentInChildren<NFTData>().price = price;
             button.GetComponentInChildren<NFTData>().appraisedValue = price;
             button.GetComponentInChildren<NFTData>().ownerGuid = gameManager.guid;

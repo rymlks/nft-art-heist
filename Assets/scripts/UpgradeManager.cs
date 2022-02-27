@@ -7,26 +7,65 @@ using UnityEngine.UI;
 public class UpgradeManager : MonoBehaviour
 {
     public GameManager gameManager;
+    public GameObject tutorialPane;
+
+    public void Show()
+    {
+        if (gameManager.first)
+        {
+            tutorialPane.SetActive(true);
+        }
+    }
 
     public void BuyRed(Button button)
     {
+        double price = 100;
+
+        if (gameManager.userData.money < price)
+        {
+            return;
+        }
         button.interactable = false;
-        Unlock("red", 1000);
+        Unlock("red", 100);
     }
     public void BuyGreen(Button button)
     {
+        double price = 1000;
+
+        if (gameManager.userData.money < price)
+        {
+            return;
+        }
         button.interactable = false;
-        Unlock("green", 10000);
+        Unlock("green", 1000);
     }
     public void BuyBlue(Button button)
     {
+        double price = 10000;
+
+        if (gameManager.userData.money < price)
+        {
+            return;
+        }
         button.interactable = false;
-        Unlock("blue", 100000);
+        Unlock("blue", 10000);
     }
 
     public void BuyTime(Button button)
     {
         Unlock("time", 1000);
+    }
+
+    public void BuyBuy(Button button)
+    {
+        double price = 200;
+
+        if (gameManager.userData.money < price)
+        {
+            return;
+        }
+        button.interactable = false;
+        Unlock("buy", 200);
     }
 
     public void Unlock(string item, double price)
