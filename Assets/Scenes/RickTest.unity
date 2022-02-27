@@ -1931,7 +1931,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &570935147
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4324,7 +4324,7 @@ PrefabInstance:
     - target: {fileID: 7647416555303641740, guid: 8d582f4f420cd3048bcc8fe33f0ee46d,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7647416555303641741, guid: 8d582f4f420cd3048bcc8fe33f0ee46d,
         type: 3}
@@ -4445,16 +4445,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Text
       value: '<color=red>The following uses online multiplayer features and user-generated
-        content. </color>
+        content. Real people drew these pictures.</color>
 
 
-        Here''s where you can spend your hard-earned
-        money on other people''s non-earned NFTs
+        Here''s where
+        you can spend your hard-earned money on other people''s non-earned NFTs
 
 
-        Click an image to buy
-        it. Everyone knows the true value of an item is whatever it sells for. You
-        can use this to your advantage.'
+        Click
+        an image to buy it. Everyone knows the true value of an item is whatever
+        it sells for. You can use this to your advantage.'
       objectReference: {fileID: 0}
     - target: {fileID: 7647416555785211498, guid: 8d582f4f420cd3048bcc8fe33f0ee46d,
         type: 3}
@@ -4631,7 +4631,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1139355513
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7005,7 +7005,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1599785804
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7489,7 +7489,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.4339623, g: 0.4339623, b: 0.4339623, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -7870,7 +7870,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.25, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -8094,8 +8094,8 @@ RectTransform:
   m_Father: {fileID: 481935848}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.25, y: 0}
+  m_AnchorMax: {x: 0.25, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}

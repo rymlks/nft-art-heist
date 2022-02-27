@@ -143,7 +143,7 @@ public class GameManager : MonoBehaviour
 
     public void UpdateMoneyText()
     {
-        moneyText.text = "Money: " + userData.money.ToString("$0.00");
+        moneyText.text = "Money: $" + userData.money.ToString("n2");
     }
 
     public void ToggleMenu()

@@ -9,10 +9,13 @@ public class UpgradeManager : MonoBehaviour
     public GameManager gameManager;
     public GameObject tutorialPane;
 
+    bool tutorial = true;
+
     public void Show()
     {
-        if (gameManager.first)
+        if (gameManager.first && tutorial)
         {
+            tutorial = false;
             tutorialPane.SetActive(true);
         }
     }

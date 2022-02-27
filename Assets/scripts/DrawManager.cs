@@ -99,7 +99,7 @@ public class DrawManager : MonoBehaviour
 
         previewImage.sprite = Sprite.Create(reference, new Rect(0.0f, 0.0f, reference.width, reference.height), Vector2.one);
 
-        previewText.text = referenceData.name + "\n" + referenceData.price.ToString("$0.00");
+        previewText.text = referenceData.name + "\n$" + referenceData.price.ToString("n2");
 
         drawing = new Texture2D(32, 32);
         drawing.filterMode = FilterMode.Point;
@@ -213,7 +213,7 @@ public class DrawManager : MonoBehaviour
 
         currentData.price = referenceData.price * (1 - diffValue);
 
-        myImageText.text = currentData.name + "\n" + currentData.price.ToString("$0.00");
+        myImageText.text = currentData.name + "\n$" + currentData.price.ToString("n2");
     }
 
     IEnumerator CountDown()
