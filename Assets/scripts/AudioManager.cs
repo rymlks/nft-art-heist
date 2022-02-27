@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class AudioManager : MonoBehaviour
 {
+    public Slider volume;
 
     //I need...
     [SerializeField] private GameManager gameManager;
@@ -18,6 +19,7 @@ public class AudioManager : MonoBehaviour
         muteToggle = gameManager.muteButton;
     }
     private void Update() {
+        audioSource.volume = volume.value;
         if (Input.GetKeyDown(KeyCode.M)) { muteToggle.isOn = !muteToggle.isOn; }
         ChangeMute(muteToggle.isOn);
 

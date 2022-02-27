@@ -479,7 +479,7 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 25220f6800f05be46a0749c23657c438, type: 3}
   - {fileID: 2800000, guid: 279c755b43dbbf541bcad4e6e63d4efe, type: 3}
   monkeyFur:
-  - {fileID: 2800000, guid: ee530bb03dbad904f90093c1c7e4b39d, type: 3}
+  - {fileID: 2800000, guid: f120bce2d0223944f9912f96eab9f971, type: 3}
   monkeyMouth:
   - {fileID: 2800000, guid: b2d57138a4017f3489f285be61294ad0, type: 3}
   - {fileID: 2800000, guid: 319c20a6eb1f95546b7c1a56f031008b, type: 3}
@@ -689,13 +689,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1654480042133574845}
   m_TextComponent: {fileID: 4651665411079786627}
   m_Placeholder: {fileID: 8158168245345992190}
-  m_ContentType: 3
+  m_ContentType: 9
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 2
+  m_KeyboardType: 0
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 2
+  m_CharacterValidation: 0
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:

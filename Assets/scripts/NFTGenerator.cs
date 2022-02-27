@@ -22,7 +22,7 @@ public class NFTGenerator : MonoBehaviour
 
     public void GenerateNFT()
     {
-        if (UnityEngine.Random.value < 0.25f)
+        if (UnityEngine.Random.value < 0.75f)
         {
             GenerateGoon();
         } else
@@ -43,15 +43,14 @@ public class NFTGenerator : MonoBehaviour
         int rMouth = (int)Mathf.Abs(RandomGaussian(-monkeyMouth.Count + 0.5f, monkeyMouth.Count - 0.5f));
         int rSkin = (int)Mathf.Abs(RandomGaussian(-monkeySkin.Count + 0.5f, monkeySkin.Count - 0.5f));
         int randombg = (int)Mathf.Abs(RandomGaussian(-palette.Count + 0.5f, palette.Count - 0.5f));
+        int randomfurColor = (int)Mathf.Abs(RandomGaussian(-palette.Count + 0.5f, palette.Count - 0.5f));
 
         float exp = 1.75f;
         value = exp;
-        value *= Mathf.Pow(exp, rOutline);
         value *= Mathf.Pow(exp, rBrow);
         value *= Mathf.Pow(exp, rEyes);
-        value *= Mathf.Pow(exp, rFur);
+        value *= Mathf.Pow(exp, randomfurColor);
         value *= Mathf.Pow(exp, rMouth);
-        value *= Mathf.Pow(exp, rSkin);
         value *= Mathf.Pow(exp, randombg);
 
         //Debug.Log("randomBottomPiece value is equal to " + randomTopPiece);
@@ -62,6 +61,7 @@ public class NFTGenerator : MonoBehaviour
         NFT.filterMode = FilterMode.Point;
 
         Color bg = palette[randombg];
+        Color furColor = palette[randomfurColor];
 
         for (int x = 0; x < NFT.width; x++)
         {
@@ -88,7 +88,7 @@ public class NFTGenerator : MonoBehaviour
                 if (monkeyFur[rFur].GetPixel(x, y).a == 1)
                 {
 
-                    NFT.SetPixel(x, y, monkeyFur[rFur].GetPixel(x, y));
+                    NFT.SetPixel(x, y, furColor);
 
                 }
                 if (monkeySkin[rSkin].GetPixel(x, y).a == 1)
