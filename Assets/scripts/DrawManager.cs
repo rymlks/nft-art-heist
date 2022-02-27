@@ -24,6 +24,7 @@ public class DrawManager : MonoBehaviour
 
 
     public GameObject tutorialPane;
+    public Button endButton;
 
     Texture2D drawing;
     Texture2D reference;
@@ -34,16 +35,31 @@ public class DrawManager : MonoBehaviour
     NFTData referenceData;
 
     bool stroking = false;
+    private Coroutine countdownCoroutine;
 
+    bool tutorial = true;
     // Start is called before the first frame update
     void Start()
     {
-        tutorialPane.SetActive(true);
+        redSlider.interactable = false;
+        greenSlider.interactable = false;
+        blueSlider.interactable = false;
+        sizeSlider.interactable = false;
+        endButton.interactable = false;
     }
 
     public void ResetTimer()
     {
         secondsLeft = 30;
+
+        foreach (string upgrade in gameManager.userData.upgrades)
+        {
+            if (upgrade.Equals("time"))
+            {
+                secondsLeft += 30;
+            }
+        }
+
         int minutes = secondsLeft / 60;
         int seconds = secondsLeft % 60;
         countdownText.text = string.Format("{0}:{1}", minutes, seconds.ToString("00"));
@@ -52,11 +68,30 @@ public class DrawManager : MonoBehaviour
 
     public void StartDrawing(GameObject option)
     {
-        redSlider.interactable = true;
-        greenSlider.interactable = true;
-        blueSlider.interactable = true;
+        if (tutorial && gameManager.first)
+        {
+            tutorial = false;
+            tutorialPane.SetActive(true);
+        }
+        endButton.interactable = true;
+        foreach (string upgrade in gameManager.userData.upgrades)
+        {
+            if (upgrade.Equals("red"))
+            {
+                redSlider.interactable = true;
+            }
+            else if (upgrade.Equals("green"))
+            {
+                greenSlider.interactable = true;
+            }
+            else if (upgrade.Equals("blue"))
+            {
+                blueSlider.interactable = true;
+            }
+        }
         sizeSlider.interactable = true;
-        secondsLeft = 30;
+
+        ResetTimer();
         referenceData = option.GetComponentInChildren<NFTData>();
         currentData = option.AddComponent<NFTData>();
         currentData.Copy(referenceData);
@@ -73,7 +108,7 @@ public class DrawManager : MonoBehaviour
         {
             for (int y = 0; y < drawing.height; y++)
             {
-                drawing.SetPixel(x, y, new Color(0,0,0,0));
+                drawing.SetPixel(x, y, Color.white);
             }
         }
         drawing.Apply();
@@ -84,13 +119,19 @@ public class DrawManager : MonoBehaviour
         option.GetComponentInChildren<Image>().sprite = mySprite;
 
         drawingActive = true;
-        StartCoroutine(CountDown());
+        countdownCoroutine = StartCoroutine(CountDown());
     }
 
     public void StopDrawing()
     {
+        endButton.interactable = false;
         drawingActive = false;
         Destroy(referenceData);
+        if (countdownCoroutine != null)
+        {
+            StopCoroutine(countdownCoroutine);
+            countdownCoroutine = null;
+        }
         StartCoroutine(SaveDrawing());
     }
 

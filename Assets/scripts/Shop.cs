@@ -30,12 +30,15 @@ public class Shop : MonoBehaviour
 
     private bool success = true;
 
-    private bool sellTutorial = true;
-    private bool buyTutorial = true;
+    public bool sellTutorial = true;
+    public bool buyTutorial = true;
 
     public void Start()
     {
-        HeistTutorialPane.SetActive(true);
+        if (gameManager.first)
+        {
+            HeistTutorialPane.SetActive(true);
+        }
         SellTutorialPane.SetActive(false);
         BuyTutorialPane.SetActive(false);
     }
@@ -44,7 +47,7 @@ public class Shop : MonoBehaviour
     {
         header.text = "Click an NFT to\nmake a sale offer\n";
 
-        if (sellTutorial)
+        if (sellTutorial && gameManager.first)
         {
             SellTutorialPane.SetActive(true);
             sellTutorial = false;
@@ -181,7 +184,13 @@ public class Shop : MonoBehaviour
     public void UpdatePrice(GameObject option)
     {
         NFTData data = option.GetComponent<NFTData>();
-        data.price = double.Parse(option.GetComponentInChildren<InputField>().text);
+        try
+        {
+            data.price = double.Parse(option.GetComponentInChildren<InputField>().text);
+        } catch
+        {
+            option.GetComponentInChildren<InputField>().text = data.price.ToString("n2");
+        }
         StartCoroutine(RequestUpdatePrice(option));
     }
 
@@ -293,7 +302,7 @@ public class Shop : MonoBehaviour
                 Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), Vector2.one);
                 button.GetComponentInChildren<Image>().sprite = mySprite;
 
-                button.GetComponentInChildren<Text>().text = "Appraised: " + entry.appraisedValue.ToString("$0.00");
+                button.GetComponentInChildren<Text>().text = "Appraised: $" + entry.appraisedValue.ToString("N2");
 
                 button.GetComponentInChildren<NFTData>().name = entry.name;
                 button.GetComponentInChildren<NFTData>().ownerGuid = System.Guid.Parse(entry.userGuid);
@@ -307,7 +316,7 @@ public class Shop : MonoBehaviour
 
                 gameManager.NFTs.Add(new NFTData(button.GetComponentInChildren<NFTData>()));
 
-                button.GetComponentInChildren<InputField>().text = entry.price.ToString("0.00");
+                button.GetComponentInChildren<InputField>().text = entry.price.ToString("N2");
 
                 if (!entry.sold && !entry.forSale)
                 {
@@ -356,14 +365,14 @@ public class Shop : MonoBehaviour
 
 
 
-            button.GetComponentInChildren<Text>().text = "Heist Contract\n" + price.ToString("$0.00");
+            button.GetComponentInChildren<Text>().text = "Heist Contract";
             button.GetComponentInChildren<NFTData>().price = price;
             button.GetComponentInChildren<NFTData>().appraisedValue = price;
             button.GetComponentInChildren<NFTData>().ownerGuid = gameManager.guid;
             button.GetComponentInChildren<NFTData>().isHeist = true;
             button.GetComponentInChildren<NFTData>().texture = heistPreviewSprite.texture;
 
-            button.GetComponentInChildren<InputField>().text = price.ToString("0.00");
+            button.GetComponentInChildren<InputField>().text = price.ToString("n2");
             button.GetComponentInChildren<InputField>().interactable = false;
         }
     }
@@ -401,7 +410,7 @@ public class Shop : MonoBehaviour
                 button.GetComponentInChildren<NFTData>().forSale = entry.forSale;
                 button.GetComponentInChildren<NFTData>().texture = tex;
 
-                button.GetComponentInChildren<InputField>().text = entry.price.ToString("0.00");
+                button.GetComponentInChildren<InputField>().text = entry.price.ToString("N2");
                 button.GetComponentInChildren<InputField>().interactable = false;
             } else
             {

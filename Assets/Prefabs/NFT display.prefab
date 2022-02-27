@@ -447,6 +447,46 @@ MonoBehaviour:
   - {r: 0, g: 1, b: 0.9066076, a: 1}
   - {r: 1, g: 0.4198113, b: 0.887015, a: 1}
   - {r: 0.5294118, g: 0.5294118, b: 0.5294118, a: 1}
+  monkeyOutline:
+  - {fileID: 2800000, guid: 9d14b23a3d7aadb47bcaf25a35def6ad, type: 3}
+  monkeyBrows:
+  - {fileID: 2800000, guid: 75da01e7625bf514487e0d6e1a94e1e0, type: 3}
+  - {fileID: 2800000, guid: c8139cc43bcf614468e07ce736181d6f, type: 3}
+  - {fileID: 2800000, guid: fce6a6a176fb3254b9b6da278bb5b07d, type: 3}
+  - {fileID: 2800000, guid: 9bb3b1558855f504c98d2672ad2d17a9, type: 3}
+  - {fileID: 2800000, guid: 01b19efc09ca4bd43939b8ae5beb1ea5, type: 3}
+  - {fileID: 2800000, guid: 221441d8147b7694d94c76ec89c6bd87, type: 3}
+  - {fileID: 2800000, guid: 649a81d7dfc55a54cadbdeee96aa05da, type: 3}
+  - {fileID: 2800000, guid: f304435d0f0ab5a449e10d9bf1c96a53, type: 3}
+  - {fileID: 2800000, guid: 626e6b4ce4b3eaa459ac42ca50068f11, type: 3}
+  monkeyEyes:
+  - {fileID: 2800000, guid: 0119d6cdd5d2dcc4ba9a7de48f9f4c25, type: 3}
+  - {fileID: 2800000, guid: ec7d8646982d5624ca6443fc83988688, type: 3}
+  - {fileID: 2800000, guid: b11b5b5fe77386b4cb832e4f3f1efe45, type: 3}
+  - {fileID: 2800000, guid: 10a982339695c7246b7f9eff082a16ad, type: 3}
+  - {fileID: 2800000, guid: b4b7a4cd3a2eed64ea7898e176775007, type: 3}
+  - {fileID: 2800000, guid: 9836bd2f78fe67549aedf8dd377f8269, type: 3}
+  - {fileID: 2800000, guid: e4e843684cde145438ae926e69c35600, type: 3}
+  - {fileID: 2800000, guid: f057306e0b64175429b6ba5670d5db77, type: 3}
+  - {fileID: 2800000, guid: 03a6fa3e8fb2c444384affb1ffeb5c41, type: 3}
+  - {fileID: 2800000, guid: 22ec19140df7c6f4a8dc0922154de690, type: 3}
+  - {fileID: 2800000, guid: 8fb52f00213fab84b8484add9bccf39a, type: 3}
+  - {fileID: 2800000, guid: e2ecbca87fc60ad4aa6376c7a193fd33, type: 3}
+  - {fileID: 2800000, guid: f29c2cb3363df714688e117e339e36a7, type: 3}
+  - {fileID: 2800000, guid: da34ea06be00a884c8fea10a49347407, type: 3}
+  - {fileID: 2800000, guid: 59acdf48c4e53ff49ae23142ecb5ab6d, type: 3}
+  - {fileID: 2800000, guid: a1f2cd17ecaab01499e65298b5eb4171, type: 3}
+  - {fileID: 2800000, guid: 25220f6800f05be46a0749c23657c438, type: 3}
+  - {fileID: 2800000, guid: 279c755b43dbbf541bcad4e6e63d4efe, type: 3}
+  monkeyFur:
+  - {fileID: 2800000, guid: f120bce2d0223944f9912f96eab9f971, type: 3}
+  monkeyMouth:
+  - {fileID: 2800000, guid: b2d57138a4017f3489f285be61294ad0, type: 3}
+  - {fileID: 2800000, guid: 319c20a6eb1f95546b7c1a56f031008b, type: 3}
+  - {fileID: 2800000, guid: 38b6b85be7d44ea48bc1c2a98f2f8089, type: 3}
+  - {fileID: 2800000, guid: b1298db04f11f8542b84588bd28853ae, type: 3}
+  monkeySkin:
+  - {fileID: 2800000, guid: 638850bfaa8cffa43b49e3e9bc7ce00b, type: 3}
   value: 0
 --- !u!1 &7364031091220315718
 GameObject:
@@ -517,8 +557,8 @@ MonoBehaviour:
     m_Font: {fileID: 12800000, guid: bdf579af15665c14bae41497fc6cc294, type: 3}
     m_FontSize: 22
     m_FontStyle: 0
-    m_BestFit: 0
-    m_MinSize: 10
+    m_BestFit: 1
+    m_MinSize: 8
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -649,13 +689,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1654480042133574845}
   m_TextComponent: {fileID: 4651665411079786627}
   m_Placeholder: {fileID: 8158168245345992190}
-  m_ContentType: 3
+  m_ContentType: 9
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 2
+  m_KeyboardType: 0
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 2
+  m_CharacterValidation: 0
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
